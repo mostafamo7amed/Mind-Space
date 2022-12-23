@@ -98,7 +98,7 @@ class ForgetPasswordView extends StatelessWidget {
                             child: Row(
                               children: [
                                 Padding(
-                                  padding: EdgeInsets.all(10.0),
+                                  padding: const EdgeInsets.all(10.0),
                                   child: ImageIcon(
                                       const AssetImage(ImageAssets.message),
                                     color: ColorManager.error,

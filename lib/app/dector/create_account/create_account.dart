@@ -1,18 +1,19 @@
 import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
 import 'package:flutter/material.dart';
-import 'package:mind_space/app/forget_password/forget_password.dart';
-import 'package:mind_space/app/register/register_view.dart';
-import 'package:mind_space/app/resources/styles_manager.dart';
-import '../../shared/components/component.dart';
-import '../dector/home/home_doctor_view.dart';
-import '../resources/assets_manager.dart';
-import '../resources/color_manager.dart';
 
-class LoginView extends StatelessWidget {
-  LoginView({Key? key}) : super(key: key);
+import '../../../shared/components/component.dart';
+import '../../forget_password/forget_password.dart';
+import '../../register/register_view.dart';
+import '../../resources/assets_manager.dart';
+import '../../resources/color_manager.dart';
+import '../../resources/styles_manager.dart';
+import '../home/home_doctor_view.dart';
+
+class CreateDoctorAccount extends StatelessWidget {
+  CreateDoctorAccount({Key? key}) : super(key: key);
+  var formKey = GlobalKey<FormState>();
   var emailController = TextEditingController();
   var passwordController = TextEditingController();
-  var formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(

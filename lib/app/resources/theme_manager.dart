@@ -24,10 +24,9 @@ ThemeData getApplicationTheme() {
     appBarTheme: AppBarTheme(
       shadowColor: ColorManager.lightPrimary,
       color: ColorManager.primary,
-      centerTitle: true,
-      elevation: AppSize.s4,
-      titleTextStyle: getRegularStyle(
-          color: ColorManager.white, fontSize: FontSizeManager.s16),
+      elevation: AppSize.s0,
+      titleTextStyle: getSemiBoldStyle(
+          color: ColorManager.white, fontSize: FontSizeManager.s18),
     ),
 
     buttonTheme: ButtonThemeData(
@@ -75,7 +74,7 @@ ThemeData getApplicationTheme() {
       ),
       focusedBorder: OutlineInputBorder(
         borderSide:
-            BorderSide(color: ColorManager.primary, width: AppSize.s1_5),
+            BorderSide(color: ColorManager.darkPrimary, width: AppSize.s1_5),
         borderRadius: const BorderRadius.all(Radius.circular(AppSize.s8)),
       ),
       errorBorder: OutlineInputBorder(
@@ -84,9 +83,24 @@ ThemeData getApplicationTheme() {
       ),
       focusedErrorBorder: OutlineInputBorder(
         borderSide:
-            BorderSide(color: ColorManager.primary, width: AppSize.s1_5),
+            BorderSide(color: ColorManager.darkPrimary, width: AppSize.s1_5),
         borderRadius: const BorderRadius.all(Radius.circular(AppSize.s8)),
       ),
+    ),
+    scaffoldBackgroundColor: Colors.white,
+    bottomNavigationBarTheme: BottomNavigationBarThemeData(
+      unselectedItemColor: ColorManager.darkGray,
+      selectedItemColor: ColorManager.darkPrimary,
+      type: BottomNavigationBarType.fixed,
+      selectedLabelStyle: TextStyle(
+        color: ColorManager.darkGray,
+      ),
+      showUnselectedLabels: false,
+      elevation: 50,
+    ),
+
+    floatingActionButtonTheme: FloatingActionButtonThemeData(
+      backgroundColor: ColorManager.primary,
     ),
   );
 }

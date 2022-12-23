@@ -8,12 +8,24 @@ import '../../shared/components/component.dart';
 import '../resources/assets_manager.dart';
 import '../resources/color_manager.dart';
 
-class RegisterView extends StatelessWidget {
+class RegisterView extends StatefulWidget {
   RegisterView({Key? key}) : super(key: key);
+
+  @override
+  State<RegisterView> createState() => _RegisterViewState();
+}
+
+class _RegisterViewState extends State<RegisterView> {
   var emailController = TextEditingController();
+
   var passwordController = TextEditingController();
+
   var conFirmPasswordController = TextEditingController();
+
   var formKey = GlobalKey<FormState>();
+
+  List<bool> isSelected = [false, false];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,7 +57,7 @@ class RegisterView extends StatelessWidget {
                     defaultFormField(
                       context: context,
                       label: 'Email Address',
-                      prefix: Icon(Icons.email,color: ColorManager.primary),
+                      prefix: Icon(Icons.email, color: ColorManager.primary),
                       controller: emailController,
                       validate: (value) {
                         if (value!.isEmpty) {
@@ -100,7 +112,46 @@ class RegisterView extends StatelessWidget {
                         isPassword: true,
                         type: TextInputType.visiblePassword),
                     const SizedBox(
-                      height: 10,
+                      height: 5,
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                          color: Colors.grey[300],
+                          borderRadius: BorderRadius.circular(7)),
+                      child: ToggleButtons(
+                          onPressed: (index) {
+                            setState(() {
+                              for (int i = 0; i < isSelected.length; i++) {
+                                if (i == index) {
+                                  isSelected[i] = true;
+                                } else {
+                                  isSelected[i] = false;
+                                }
+                              }
+                            });
+                          },
+                          color: Colors.black,
+                          fillColor: ColorManager.primary,
+                          selectedColor: Colors.white,
+                          focusColor: Colors.white,
+                          renderBorder: false,
+                          borderRadius: BorderRadius.circular(7),
+                          isSelected: isSelected,
+                          children: const <Widget>[
+                            Padding(
+                              padding:
+                                  EdgeInsets.only(left: 8.0, right: 8),
+                              child: Text('Doctor',style: TextStyle(fontSize: 14),),
+                            ),
+                            Padding(
+                              padding:
+                                  EdgeInsets.only(left: 8.0, right: 8),
+                              child: Text('Student',style: TextStyle(fontSize: 14),),
+                            ),
+                          ]),
+                    ),
+                    const SizedBox(
+                      height: 5,
                     ),
                     Container(
                       width: double.infinity,
@@ -128,7 +179,7 @@ class RegisterView extends StatelessWidget {
                           ),
                         ),
                         onPressed: () {
-                          //TODO login press
+                          //TODO Register press
                           //navigateTo(context, const HomeAdminView());
                         },
                       ),
