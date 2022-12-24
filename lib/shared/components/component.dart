@@ -8,7 +8,7 @@ String uid = '';
 Widget defaultFormField({
   required TextEditingController controller,
   required String label,
-  required Icon prefix,
+  prefix,
   required validate,
   required TextInputType type,
   required context,
@@ -29,8 +29,11 @@ Widget defaultFormField({
         onChanged: onChange,
         style: getRegularStyle(color: ColorManager.black, fontSize: 16),
         decoration: InputDecoration(
-          label: Text(label,
-              style: getRegularStyle(color: ColorManager.black, fontSize: 16)),
+          label: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 5.0),
+            child: Text(label,
+                style: getRegularStyle(color: ColorManager.black, fontSize: 16)),
+          ),
           prefixIcon: prefix,
           suffixIcon: suffix != null
               ? IconButton(

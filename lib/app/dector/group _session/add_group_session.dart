@@ -1,26 +1,25 @@
 import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-
 import '../../../shared/components/component.dart';
 import '../../../styles/icons_broken.dart';
 import '../../resources/assets_manager.dart';
 import '../../resources/color_manager.dart';
-import '../../resources/styles_manager.dart';
 
-class EditDoctorProfile extends StatelessWidget {
-  EditDoctorProfile({Key? key}) : super(key: key);
+class AddGroupSession extends StatelessWidget {
+  AddGroupSession({Key? key}) : super(key: key);
+
   var formKey = GlobalKey<FormState>();
-  var nameController = TextEditingController();
-  var phoneController = TextEditingController();
-  var departController = TextEditingController();
+  var addressController = TextEditingController();
+  var descriptionController = TextEditingController();
+  var timeController = TextEditingController();
   var dateController = TextEditingController();
-  int _value =1;
+  var linkController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: ColorManager.background,
-      appBar: AppBar(title: Text('Edit Profile')),
+      appBar: AppBar(title: Text('Add Group Session')),
       body: SafeArea(
         child: Form(
           key: formKey,
@@ -29,7 +28,7 @@ class EditDoctorProfile extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 SizedBox(
-                  height: 150,
+                  height: 100,
                   child: Stack(
                     alignment: Alignment.topCenter,
                     children: [
@@ -41,41 +40,6 @@ class EditDoctorProfile extends StatelessWidget {
                           fit: BoxFit.fill,
                         ),
                       ),
-                      Align(
-                        alignment: Alignment.bottomCenter,
-                        child: Container(
-                          width: 117,
-                          child: Stack(
-                            alignment: Alignment.bottomCenter,
-                            children: [
-                              CircleAvatar(
-                                radius: 58,
-                                backgroundColor:
-                                Theme.of(context).scaffoldBackgroundColor,
-                                child: const CircleAvatar(
-                                  radius: 55,
-                                  backgroundImage: AssetImage(
-                                    ImageAssets.photo,
-                                  ),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Align(
-                                  alignment: Alignment.bottomRight,
-                                  child: CircleAvatar(
-                                    radius: 16,
-                                    child: Icon(
-                                      IconBroken.Camera,
-                                      color: ColorManager.white,
-                                    ),
-                                  ),
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                      ),
                     ],
                   ),
                 ),
@@ -84,8 +48,8 @@ class EditDoctorProfile extends StatelessWidget {
                   child: Column(
                     children: [
                       defaultFormField(
-                          controller: nameController,
-                          label: 'Name',
+                          controller: addressController,
+                          label: 'Address',
                           validate: (value) {
                             if (value!.isEmpty) {
                               return 'Name can\'t be empty';
@@ -99,11 +63,11 @@ class EditDoctorProfile extends StatelessWidget {
                       ),
                       defaultFormField(
                           context: context,
-                          controller: phoneController,
-                          label: 'Phone Number',
+                          controller: descriptionController,
+                          label: 'Description',
                           validate: (value) {
                             if (value!.isEmpty) {
-                              return 'phone can\'t be empty';
+                              return 'Description can\'t be empty';
                             }
                             return null;
                           },
@@ -111,21 +75,7 @@ class EditDoctorProfile extends StatelessWidget {
                             // TODO change visibility
                           },
                           isPassword: true,
-                          type: TextInputType.number),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      defaultFormField(
-                          controller: departController,
-                          label: 'Department',
-                          validate: (value) {
-                            if (value!.isEmpty) {
-                              return 'Department can\'t be empty';
-                            }
-                            return null;
-                          },
-                          type: TextInputType.text,
-                          context: context),
+                          type: TextInputType.text),
                       const SizedBox(
                         height: 10,
                       ),
@@ -141,23 +91,36 @@ class EditDoctorProfile extends StatelessWidget {
                           type: TextInputType.datetime,
                           context: context),
                       const SizedBox(
+                        height: 10,
+                      ),
+                      defaultFormField(
+                          controller: timeController,
+                          label: 'Time',
+                          validate: (value) {
+                            if (value!.isEmpty) {
+                              return 'Time can\'t be empty';
+                            }
+                            return null;
+                          },
+                          type: TextInputType.datetime,
+                          context: context),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      defaultFormField(
+                          controller: linkController,
+                          label: 'Link',
+                          validate: (value) {
+                            if (value!.isEmpty) {
+                              return 'Link can\'t be empty';
+                            }
+                            return null;
+                          },
+                          type: TextInputType.text,
+                          context: context),
+                      const SizedBox(
                         height: 5,
                       ),
-                      Row(children: [
-                        Radio(
-                            activeColor: ColorManager.primary,
-                            focusColor:ColorManager.primary ,value: 1, groupValue: _value, onChanged: (value){
-
-                        }),
-                        Text("Male",style: getRegularStyle(color: ColorManager.black, fontSize: 16),),
-                        SizedBox(width: 10,),
-                        Radio(
-                            activeColor: ColorManager.primary,
-                            focusColor:ColorManager.primary ,value: 2, groupValue: _value, onChanged: (value){
-
-                        }),
-                        Text("Female",style: getRegularStyle(color: ColorManager.black, fontSize: 16),),
-                      ],),
                       Container(
                         width: double.infinity,
                         height: 40,
@@ -169,7 +132,7 @@ class EditDoctorProfile extends StatelessWidget {
                           child: ConditionalBuilder(
                             condition: true, //TODO loading state
                             builder: (context) => const Text(
-                              'Save Changes',
+                              'Save Session',
                               style: TextStyle(
                                 color: Colors.white,
                               ),

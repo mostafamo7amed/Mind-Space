@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../styles/icons_broken.dart';
+import '../../resources/assets_manager.dart';
 import '../../resources/color_manager.dart';
 import '../../resources/font_manager.dart';
 import '../../resources/styles_manager.dart';
@@ -25,7 +26,7 @@ class AcceptedAppointment extends StatelessWidget {
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               itemBuilder: (context, index) {
-                return acceptedAppItemBuilder();
+                return acceptedAppItemBuilder(context);
               },
               separatorBuilder: (context, index) => const SizedBox(
                 height: 2,
@@ -35,14 +36,16 @@ class AcceptedAppointment extends StatelessWidget {
       ),
     );
   }
-  Widget acceptedAppItemBuilder() {
+  Widget acceptedAppItemBuilder(context) {
     return Padding(
       padding: const EdgeInsets.only(
         left: 5,
         right: 5,
       ),
       child: InkWell(
-        onTap: (){},
+        onTap: (){
+          showAppointmentDialog(context);
+        },
         child: Card(
             clipBehavior: Clip.antiAliasWithSaveLayer,
             elevation: 5,
@@ -116,4 +119,130 @@ class AcceptedAppointment extends StatelessWidget {
       ),
     );
   }
+
+  Future showAppointmentDialog(context) => showDialog(
+    context: context,
+    builder: (context) {
+      return Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                children: [
+                  Spacer(),
+                  ImageIcon(AssetImage(ImageAssets.point),
+                    size: 12,
+                    color: ColorManager.error,
+                  ),
+                ],
+              ),
+              Text(
+                "Individual session",
+                style: getBoldStyle(
+                    color: ColorManager.darkGray, fontSize: 18),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Text(
+                "22 Jun 2023",
+                style: getSemiBoldStyle(
+                    color: ColorManager.darkGray, fontSize: 14),
+              ),
+              SizedBox(
+                height: 5,
+              ),
+              Text(
+                "Online",
+                style: getSemiBoldStyle(
+                    color: ColorManager.darkGray, fontSize: 14),
+              ),
+              SizedBox(
+                height: 5,
+              ),
+              Text(
+                "9:00 AM",
+                style: getSemiBoldStyle(
+                    color: ColorManager.darkGray, fontSize: 14),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  TextButton(
+                    style: ButtonStyle(
+                        shape: MaterialStatePropertyAll(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(50),
+                          ),
+                        ),
+                        backgroundColor:
+                        MaterialStatePropertyAll(Colors.green)),
+                    onPressed: () {
+                      //ToDo view user
+                    },
+                    child: Text(
+                      "Join",
+                      style: getRegularStyle(color: ColorManager.white),
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  TextButton(
+                    style: ButtonStyle(
+                        shape: MaterialStatePropertyAll(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(50),
+                          ),
+                        ),
+                        backgroundColor:
+                        MaterialStatePropertyAll(Colors.red)),
+                    onPressed: () {
+                      //ToDo block user
+                    },
+                    child: Text(
+                      "Cancel",
+                      style: getRegularStyle(color: ColorManager.white),
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  TextButton(
+                    style: ButtonStyle(
+                        shape: MaterialStatePropertyAll(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(50),
+                          ),
+                        ),
+                        backgroundColor:
+                        MaterialStatePropertyAll(Colors.blue)),
+                    onPressed: () {
+                      //ToDo block user
+                    },
+                    child: Text(
+                      "Edit",
+                      style: getRegularStyle(color: ColorManager.white),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: 10,
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
 }

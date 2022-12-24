@@ -3,6 +3,7 @@ import 'package:conditional_builder_null_safety/conditional_builder_null_safety.
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:mind_space/app/admin/home/home_admin_view.dart';
+import 'package:mind_space/app/dector/create_account/create_account.dart';
 import 'package:mind_space/app/resources/styles_manager.dart';
 import '../../shared/components/component.dart';
 import '../resources/assets_manager.dart';
@@ -29,6 +30,7 @@ class _RegisterViewState extends State<RegisterView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: ColorManager.white,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(20.0),
@@ -45,7 +47,7 @@ class _RegisterViewState extends State<RegisterView> {
                       child: Image.asset(ImageAssets.splashLogo),
                     ),
                     const SizedBox(
-                      height: 20,
+                      height: 10,
                     ),
                     Text(
                       'Registration',
@@ -180,7 +182,7 @@ class _RegisterViewState extends State<RegisterView> {
                         ),
                         onPressed: () {
                           //TODO Register press
-                          //navigateTo(context, const HomeAdminView());
+                          navigateTo(context, CreateDoctorAccount());
                         },
                       ),
                     ),

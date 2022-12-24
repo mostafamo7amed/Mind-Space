@@ -87,7 +87,7 @@ ThemeData getApplicationTheme() {
         borderRadius: const BorderRadius.all(Radius.circular(AppSize.s8)),
       ),
     ),
-    scaffoldBackgroundColor: Colors.white,
+    scaffoldBackgroundColor: ColorManager.background,
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
       unselectedItemColor: ColorManager.darkGray,
       selectedItemColor: ColorManager.darkPrimary,

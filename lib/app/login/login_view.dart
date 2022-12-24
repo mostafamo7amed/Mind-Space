@@ -1,5 +1,6 @@
 import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
 import 'package:flutter/material.dart';
+import 'package:mind_space/app/admin/home/home_admin_view.dart';
 import 'package:mind_space/app/forget_password/forget_password.dart';
 import 'package:mind_space/app/register/register_view.dart';
 import 'package:mind_space/app/resources/styles_manager.dart';
@@ -16,6 +17,7 @@ class LoginView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: ColorManager.white,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(20.0),
@@ -118,7 +120,7 @@ class LoginView extends StatelessWidget {
                         ),
                         onPressed: () {
                           //TODO login press
-                          navigateTo(context, const HomeDoctorView());
+                          navigateTo(context, HomeAdminView());
                         },
                       ),
                     ),

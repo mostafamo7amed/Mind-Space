@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:mind_space/app/dector/profile/edit_profile.dart';
+import 'package:mind_space/app/dector/profile/view_personal_info.dart';
+import '../../../shared/components/component.dart';
 import '../../../styles/icons_broken.dart';
 import '../../resources/assets_manager.dart';
 import '../../resources/color_manager.dart';
@@ -85,7 +88,7 @@ class Profile extends StatelessWidget {
                       ],)
                   ),
                   onTap: () {
-                    //navigateTo(context, UserManagement());
+                    navigateTo(context, ViewDoctorInfo());
                   },
                 ),
                 const SizedBox(
@@ -110,8 +113,37 @@ class Profile extends StatelessWidget {
                       ],)
                   ),
                   onTap: () {
-                    //navigateTo(context, AppointmentManagement());
+                    navigateTo(context, EditDoctorProfile());
                   },
+                ),
+
+                SizedBox(
+                  height: 150,
+                  width: 200,
+                  child: Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Card(
+                        clipBehavior: Clip.antiAliasWithSaveLayer,
+                        elevation: 1,
+                        child: Row(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: ImageIcon(
+                                const AssetImage(ImageAssets.message),
+                                color: ColorManager.error,
+                                size: 30,
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text("We Ready to help",
+                                style: getSemiBoldStyle(color: ColorManager.darkGray,fontSize: 14),
+                              ),
+                            ),
+                          ],
+                        )),
+                  ),
                 ),
               ],
             ),

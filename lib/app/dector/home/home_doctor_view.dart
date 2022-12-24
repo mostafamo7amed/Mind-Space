@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mind_space/app/dector/home/home_cubit/cubit.dart';
 import 'package:mind_space/app/dector/home/home_cubit/states.dart';
+import 'package:mind_space/app/login/login_view.dart';
 import 'package:mind_space/app/resources/color_manager.dart';
+import 'package:mind_space/shared/components/component.dart';
 
 import '../../resources/assets_manager.dart';
 import '../../resources/styles_manager.dart';
@@ -26,7 +28,9 @@ class HomeDoctorView extends StatelessWidget {
               ),
               actions: [
                 IconButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    navigateAndFinish(context, LoginView());
+                  },
                   icon: const ImageIcon(
                     AssetImage(ImageAssets.shutdown),
                     size: 25,

@@ -6,7 +6,7 @@ class ImageAssets {
   static const String shutdown = '$imagesPath/shutdown.png';
   static const String communication = '$imagesPath/communication_ic.png';
   static const String message = '$imagesPath/message_ic.png';
+  static const String point = '$imagesPath/point_ic.png';
   static const String photo = '$imagesPath/photo.jpg';
-
 
 }

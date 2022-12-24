@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.mindSpace.mind_space">
    <application
-        android:label="mind_space"
+        android:label="Mind Space"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
