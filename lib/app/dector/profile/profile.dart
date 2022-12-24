@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:mind_space/app/dector/profile/edit_profile.dart';
+import 'package:mind_space/app/dector/profile/view_feedbacks.dart';
 import 'package:mind_space/app/dector/profile/view_personal_info.dart';
 import '../../../shared/components/component.dart';
 import '../../../styles/icons_broken.dart';
@@ -68,7 +69,7 @@ class Profile extends StatelessWidget {
             padding: const EdgeInsets.all(20.0),
             child: Column(
               children: [
-                const SizedBox(height: 50,),
+                const SizedBox(height: 10,),
                 InkWell(
                   child: Card(
                       margin: const EdgeInsets.all(5),
@@ -92,7 +93,7 @@ class Profile extends StatelessWidget {
                   },
                 ),
                 const SizedBox(
-                  height: 15,
+                  height: 5,
                 ),
                 InkWell(
                   child: Card(
@@ -116,9 +117,33 @@ class Profile extends StatelessWidget {
                     navigateTo(context, EditDoctorProfile());
                   },
                 ),
-
+                const SizedBox(
+                  height: 5,
+                ),
+                InkWell(
+                  child: Card(
+                      margin: const EdgeInsets.all(5),
+                      clipBehavior: Clip.antiAliasWithSaveLayer,
+                      elevation: 3,
+                      child: Row(children: [
+                        Padding(
+                          padding:const EdgeInsets.all(20.0),
+                          child: Text("View feedbacks",
+                            style: getSemiBoldStyle(color: ColorManager.darkGray,fontSize: 18) ,),
+                        ),
+                        const Spacer(),
+                        const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Icon(IconBroken.Arrow___Right_2),
+                        ),
+                      ],)
+                  ),
+                  onTap: () {
+                    navigateTo(context, ViewFeedbacks());
+                  },
+                ),
                 SizedBox(
-                  height: 150,
+                  height: 100,
                   width: 200,
                   child: Align(
                     alignment: Alignment.bottomCenter,
