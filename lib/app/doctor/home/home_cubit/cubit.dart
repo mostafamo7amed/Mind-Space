@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mind_space/app/admin/home/home_cubit/states.dart';
-import 'package:mind_space/app/dector/home/home_cubit/states.dart';
+import 'package:mind_space/app/doctor/home/home_cubit/states.dart';
 
 import '../../accepted_appointment/accepted_appointment.dart';
 import '../../appointement/appointment.dart';

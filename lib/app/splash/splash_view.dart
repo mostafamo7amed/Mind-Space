@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:mind_space/app/dector/home/home_doctor_view.dart';
+import 'package:mind_space/app/doctor/home/home_doctor_view.dart';
 import 'package:mind_space/app/resources/assets_manager.dart';
 import 'package:mind_space/shared/components/component.dart';
 import '../login/login_view.dart';

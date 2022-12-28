@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:mind_space/app/dector/group%20_session/add_group_session.dart';
-import 'package:mind_space/app/dector/group%20_session/view_group_session.dart';
+import 'package:mind_space/app/doctor/group%20_session/add_group_session.dart';
+import 'package:mind_space/app/doctor/group%20_session/view_group_session.dart';
 import 'package:mind_space/shared/components/component.dart';
 import '../../../styles/icons_broken.dart';
 import '../../resources/color_manager.dart';

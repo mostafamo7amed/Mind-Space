@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "745290781667",
+    "project_id": "mind-space-6a795",
+    "storage_bucket": "mind-space-6a795.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:745290781667:android:ebc6bc1ffdb666bd54c6d6",
+        "android_client_info": {
+          "package_name": "com.mindSpace.mind_space"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "745290781667-tj15p8h1qmgdm131qgv2l9lkofunvmeu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCZ3OIrMfI_g10EV3RyrFF78ZqTqnG63Ug"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "745290781667-tj15p8h1qmgdm131qgv2l9lkofunvmeu.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

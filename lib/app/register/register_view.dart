@@ -3,7 +3,7 @@ import 'package:conditional_builder_null_safety/conditional_builder_null_safety.
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:mind_space/app/admin/home/home_admin_view.dart';
-import 'package:mind_space/app/dector/create_account/create_account.dart';
+import 'package:mind_space/app/doctor/create_account/create_account.dart';
 import 'package:mind_space/app/resources/styles_manager.dart';
 import '../../shared/components/component.dart';
 import '../resources/assets_manager.dart';

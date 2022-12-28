@@ -20,7 +20,9 @@ class AppointmentManagement extends StatelessWidget {
         elevation: 0.0,
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+
+            },
             icon: const ImageIcon(
               AssetImage(ImageAssets.shutdown),
               size: 25,
@@ -60,11 +62,13 @@ class AppointmentManagement extends StatelessWidget {
                           ),
                           validate: (value) {
                             if (value.isEmpty) {
-                              return 'enter product name to search of';
+                              return '';
                             }
                           },
                           type: TextInputType.text,
-                          onSubmit: (String text) {}),
+                          onSubmit: (String text) {
+
+                          }),
                     ),
                   ),
                 ],

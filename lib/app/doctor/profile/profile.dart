@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:mind_space/app/dector/profile/edit_profile.dart';
-import 'package:mind_space/app/dector/profile/view_feedbacks.dart';
-import 'package:mind_space/app/dector/profile/view_personal_info.dart';
+import 'package:mind_space/app/doctor/profile/edit_profile.dart';
+import 'package:mind_space/app/doctor/profile/view_feedbacks.dart';
+import 'package:mind_space/app/doctor/profile/view_personal_info.dart';
 import '../../../shared/components/component.dart';
 import '../../../styles/icons_broken.dart';
 import '../../resources/assets_manager.dart';
