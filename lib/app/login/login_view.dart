@@ -1,9 +1,9 @@
 import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
 import 'package:flutter/material.dart';
+import 'package:mind_space/app/admin/home/home_admin_view.dart';
 import 'package:mind_space/app/forget_password/forget_password.dart';
 import 'package:mind_space/app/register/register_view.dart';
 import 'package:mind_space/app/resources/styles_manager.dart';
-import 'package:mind_space/app/student/home/home_student_view.dart';
 import '../../shared/components/component.dart';
 import '../resources/assets_manager.dart';
 import '../resources/color_manager.dart';
@@ -119,7 +119,7 @@ class LoginView extends StatelessWidget {
                         ),
                         onPressed: () {
                           //TODO login press
-                          navigateTo(context, HomeStudentView());
+                          navigateTo(context, HomeAdminView());
                         },
                       ),
                     ),

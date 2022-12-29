@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 import '../../../styles/icons_broken.dart';
 import '../../resources/assets_manager.dart';
@@ -6,46 +7,18 @@ import '../../resources/color_manager.dart';
 import '../../resources/font_manager.dart';
 import '../../resources/styles_manager.dart';
 
-class Appointment extends StatelessWidget {
-  Appointment({Key? key}) : super(key: key);
+class PreviousSession extends StatelessWidget {
+  const PreviousSession({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
+        appBar: AppBar(title: Text('Previous Session'),),
         backgroundColor: ColorManager.background,
         body: Column(
           children: [
-            Container(
-              height: 100,
-              decoration: BoxDecoration(
-                color: ColorManager.primary,
-                borderRadius: const BorderRadius.only(
-                    bottomLeft: Radius.circular(10),
-                    bottomRight: Radius.circular(10)),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.only(left: 14.0, right: 14),
-                child: Row(children: [
-                  Text("Welcome",
-                      style: getBoldStyle(
-                          color: ColorManager.white,
-                          fontSize: FontSizeManager.s24)),
-                  const Spacer(),
-                  CircleAvatar(
-                    radius: 28,
-                    backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                    child: const CircleAvatar(
-                      radius: 25,
-                      backgroundImage: AssetImage(
-                        ImageAssets.photo,
-                      ),
-                    ),
-                  ),
-                ]),
-              ),
-            ),
             const SizedBox(
               width: double.infinity,
               child: TabBar(
@@ -87,8 +60,8 @@ class Appointment extends StatelessWidget {
                 return onlineItemBuilder(context);
               },
               separatorBuilder: (context, index) => const SizedBox(
-                    height: 2,
-                  ),
+                height: 2,
+              ),
               itemCount: 10),
         ],
       ),
@@ -108,8 +81,8 @@ class Appointment extends StatelessWidget {
                 return offlineItemBuilder(context);
               },
               separatorBuilder: (context, index) => const SizedBox(
-                    height: 2,
-                  ),
+                height: 2,
+              ),
               itemCount: 10),
         ],
       ),
@@ -265,100 +238,140 @@ class Appointment extends StatelessWidget {
   }
 
   Future showAppointmentDialog(context) => showDialog(
-        context: context,
-        builder: (context) {
-          return Dialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
+    context: context,
+    builder: (context) {
+      return Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
                 children: [
-                  Row(
-                    children: [
-                      Spacer(),
-                      ImageIcon(AssetImage(ImageAssets.point),
-                      size: 12,
-                      color: ColorManager.error,
-                      ),
-                    ],
-                  ),
-                  Text(
-                    "Individual session",
-                    style: getBoldStyle(
-                        color: ColorManager.darkGray, fontSize: 18),
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Text(
-                    "22 Jun 2023",
-                    style: getSemiBoldStyle(
-                        color: ColorManager.darkGray, fontSize: 14),
-                  ),
-                  SizedBox(
-                    height: 5,
-                  ),
-                  Text(
-                    "9:00 AM",
-                    style: getSemiBoldStyle(
-                        color: ColorManager.darkGray, fontSize: 14),
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      TextButton(
-                        style: ButtonStyle(
-                            shape: MaterialStatePropertyAll(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(50),
-                              ),
-                            ),
-                            backgroundColor:
-                                MaterialStatePropertyAll(Colors.green)),
-                        onPressed: () {
-                          //ToDo view user
-                        },
-                        child: Text(
-                          "Accept",
-                          style: getRegularStyle(color: ColorManager.white),
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      TextButton(
-                        style: ButtonStyle(
-                            shape: MaterialStatePropertyAll(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(50),
-                              ),
-                            ),
-                            backgroundColor:
-                                MaterialStatePropertyAll(Colors.red)),
-                        onPressed: () {
-                          //ToDo block user
-                        },
-                        child: Text(
-                          "Reject",
-                          style: getRegularStyle(color: ColorManager.white),
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 10,
+                  Spacer(),
+                  ImageIcon(AssetImage(ImageAssets.point),
+                    size: 12,
+                    color: ColorManager.error,
                   ),
                 ],
               ),
-            ),
-          );
-        },
+              Text(
+                "Individual session",
+                style: getBoldStyle(
+                    color: ColorManager.darkGray, fontSize: 18),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Text(
+                "22 Jun 2023",
+                style: getSemiBoldStyle(
+                    color: ColorManager.darkGray, fontSize: 14),
+              ),
+              SizedBox(
+                height: 5,
+              ),
+              Text(
+                "9:00 AM",
+                style: getSemiBoldStyle(
+                    color: ColorManager.darkGray, fontSize: 14),
+              ),
+              SizedBox(
+                width: double.infinity,
+                child: Padding(
+                  padding:
+                  const EdgeInsets.only(left: 10.0, right: 10.0, top: 10.0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Doctor report : ",
+                        style: getSemiBoldStyle(
+                            color: ColorManager.black, fontSize: 16),
+                      ),
+                      Text(
+                        "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries",
+                        maxLines: 10,
+                        overflow: TextOverflow.ellipsis,
+                        style: getSemiBoldStyle(
+                            color: ColorManager.darkGray, fontSize: 16),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              SizedBox(
+                width: double.infinity,
+                child: Padding(
+                  padding:
+                  const EdgeInsets.only(left: 10.0, right: 10.0, top: 10.0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Review Doctor : ",
+                        style: getSemiBoldStyle(
+                            color: ColorManager.black, fontSize: 16),
+                      ),
+                      RatingBar.builder(
+                        itemBuilder: (context, index) {
+                          return Icon(
+                            Icons.star,
+                            color: Colors.amber,
+                          );
+                        },
+                        onRatingUpdate: (value) {
+                          //todo change rating double
+                        },
+                        minRating: 3,
+                        allowHalfRating: true,
+                        updateOnDrag: true,
+                        unratedColor: Colors.grey,
+                        glowColor: Colors.orange,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  TextButton(
+                    style: ButtonStyle(
+                        shape: MaterialStatePropertyAll(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(50),
+                          ),
+                        ),
+                        backgroundColor:
+                        MaterialStatePropertyAll(Colors.red)),
+                    onPressed: () {
+                      //ToDo block user
+                      Navigator.pop(context);
+                    },
+                    child: Text(
+                      "Cancel",
+                      style: getRegularStyle(color: ColorManager.white),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: 10,
+              ),
+            ],
+          ),
+        ),
       );
+    },
+  );
 }

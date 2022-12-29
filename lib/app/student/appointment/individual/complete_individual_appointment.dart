@@ -62,138 +62,139 @@ class CompleteIndividualAppointment extends StatelessWidget {
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.all(20.0),
-                child: Column(
-                  children: [
-                    defaultFormField(
-                      controller: timeController,
-                      label: 'Appointment Time',
-                      prefix: Icon(Icons.watch_later_outlined,color: ColorManager.primary,),
-                      onTap: (){
-                        showTimePicker(
-                            context: context,
-                            initialTime: TimeOfDay.now(),
-                          builder: (context, child) {
-                            return Theme(
-                              data: ThemeData.dark().copyWith(
-                                colorScheme: ColorScheme.dark(
-                                  primary: Colors.grey,
-                                  onPrimary: Colors.black,
-                                  surface: ColorManager.white,
-                                  onSurface: ColorManager.darkPrimary,
-                                ),
-                                dialogBackgroundColor:Colors.white,
-                              ),
-                              child: child!,
-                            );
-                          },
-                        ).then((value) {
-                          if(value != null) {
-                            timeController.text = value.format(context);
-                          }else {
-                            timeController.text = '';
-                          }
-                        });
-
-                      },
-                      validate: (value){
-                        if(value.isEmpty){
-                          return 'Time can\'t be empty';
-                        }
-                        return null;
-                      },
-                      type: TextInputType.number, context: context,
-                    ),
-                    const SizedBox(
-                      height: 15,
-                    ),
-                    defaultFormField(
-                        controller: dateController,
-                        label: 'Appointment Date',
-                        prefix: Icon(Icons.calendar_today,color: ColorManager.primary,),
+                child: SingleChildScrollView(
+                  physics: BouncingScrollPhysics(),
+                  child: Column(
+                    children: [
+                      defaultFormField(
+                        controller: timeController,
+                        label: 'Appointment Time',
+                        prefix: Icon(Icons.watch_later_outlined,color: ColorManager.primary,),
                         onTap: (){
-                          showDatePicker(
+                          showTimePicker(
                               context: context,
-                              initialDate: DateTime.now(),
-                              firstDate: DateTime.now(),
-                              lastDate: DateTime.parse('2050-11-11'),
-                              builder: (context, child) {
-                                return Theme(
-                                  data: ThemeData.dark().copyWith(
-                                    colorScheme: ColorScheme.dark(
-                                      primary: Colors.grey,
-                                      onPrimary: Colors.black,
-                                      surface: ColorManager.primary,
-                                      onSurface: ColorManager.darkPrimary,
-                                    ),
-                                    dialogBackgroundColor:Colors.white,
+                              initialTime: TimeOfDay.now(),
+                            builder: (context, child) {
+                              return Theme(
+                                data: ThemeData.dark().copyWith(
+                                  colorScheme: ColorScheme.dark(
+                                    primary: Colors.grey,
+                                    onPrimary: Colors.black,
+                                    surface: ColorManager.white,
+                                    onSurface: ColorManager.darkPrimary,
                                   ),
-                                  child: child!,
-                                );
-                              },
+                                  dialogBackgroundColor:Colors.white,
+                                ),
+                                child: child!,
+                              );
+                            },
                           ).then((value) {
                             if(value != null) {
-                              dateController.text = DateFormat.yMMMd().format(value).toString();
+                              timeController.text = value.format(context);
                             }else {
-                              dateController.text = '';
+                              timeController.text = '';
                             }
                           });
-
 
                         },
                         validate: (value){
                           if(value.isEmpty){
-                            return 'Date can\'t be empty';
+                            return 'Time can\'t be empty';
                           }
                           return null;
                         },
-                        type: TextInputType.number, context: context),
-                  ],
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Container(
-                width: double.infinity,
-                height: 40,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(7),
-                  color: ColorManager.primary,
-                ),
-                child: MaterialButton(
-                  child: ConditionalBuilder(
-                    condition: true, //TODO loading state
-                    builder: (context) => const Text(
-                      'Book',
-                      style: TextStyle(
-                        color: Colors.white,
+                        type: TextInputType.number, context: context,
                       ),
-                    ),
-                    fallback: (context) => const SizedBox(
-                      height: 25,
-                      width: 25,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 3,
-                        backgroundColor: Colors.white,
+                      const SizedBox(
+                        height: 15,
                       ),
-                    ),
-                  ),
-                  onPressed: () {
+                      defaultFormField(
+                          controller: dateController,
+                          label: 'Appointment Date',
+                          prefix: Icon(Icons.calendar_today,color: ColorManager.primary,),
+                          onTap: (){
+                            showDatePicker(
+                                context: context,
+                                initialDate: DateTime.now(),
+                                firstDate: DateTime.now(),
+                                lastDate: DateTime.parse('2050-11-11'),
+                                builder: (context, child) {
+                                  return Theme(
+                                    data: ThemeData.dark().copyWith(
+                                      colorScheme: ColorScheme.dark(
+                                        primary: Colors.grey,
+                                        onPrimary: Colors.black,
+                                        surface: ColorManager.primary,
+                                        onSurface: ColorManager.darkPrimary,
+                                      ),
+                                      dialogBackgroundColor:Colors.white,
+                                    ),
+                                    child: child!,
+                                  );
+                                },
+                            ).then((value) {
+                              if(value != null) {
+                                dateController.text = DateFormat.yMMMd().format(value).toString();
+                              }else {
+                                dateController.text = '';
+                              }
+                            });
 
-                   //todo booking
-                    if(appointmentType == 'Online'){
-                      showModalBottomSheet(
-                        backgroundColor: ColorManager.background,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.only(
-                                topRight: Radius.circular(10),
-                                topLeft: Radius.circular(10))),
-                        context: context,
-                        builder: (context) =>
-                            bottomSheetBuilder(context),
-                      );
-                    }
-                  },
+
+                          },
+                          validate: (value){
+                            if(value.isEmpty){
+                              return 'Date can\'t be empty';
+                            }
+                            return null;
+                          },
+                          type: TextInputType.number, context: context),
+                      SizedBox(height:10,),
+                      Container(
+                        width: double.infinity,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(7),
+                          color: ColorManager.primary,
+                        ),
+                        child: MaterialButton(
+                          child: ConditionalBuilder(
+                            condition: true, //TODO loading state
+                            builder: (context) => const Text(
+                              'Book',
+                              style: TextStyle(
+                                color: Colors.white,
+                              ),
+                            ),
+                            fallback: (context) => const SizedBox(
+                              height: 25,
+                              width: 25,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 3,
+                                backgroundColor: Colors.white,
+                              ),
+                            ),
+                          ),
+                          onPressed: () {
+
+                            //todo booking
+                            if(appointmentType == 'Online'){
+                              showModalBottomSheet(
+                                backgroundColor: ColorManager.background,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.only(
+                                        topRight: Radius.circular(10),
+                                        topLeft: Radius.circular(10))),
+                                context: context,
+                                builder: (context) =>
+                                    bottomSheetBuilder(context),
+                              );
+                            }
+                          },
+                        ),
+                      )
+                    ],
+                  ),
                 ),
               ),
             ),

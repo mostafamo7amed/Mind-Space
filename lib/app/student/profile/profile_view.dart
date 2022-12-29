@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-
+import 'package:mind_space/app/student/profile/previous_session.dart';
+import 'package:mind_space/app/student/profile/view_personal_info.dart';
+import '../../../shared/components/component.dart';
 import '../../../styles/icons_broken.dart';
 import '../../resources/assets_manager.dart';
 import '../../resources/color_manager.dart';
 import '../../resources/styles_manager.dart';
+import 'edit_student_profile.dart';
 
 class StudentProfile extends StatelessWidget {
   const StudentProfile({Key? key}) : super(key: key);
@@ -86,7 +89,7 @@ class StudentProfile extends StatelessWidget {
                       ],)
                   ),
                   onTap: () {
-                    //navigateTo(context, ViewDoctorInfo());
+                    navigateTo(context, ViewStudentInfo());
                   },
                 ),
                 const SizedBox(
@@ -111,7 +114,7 @@ class StudentProfile extends StatelessWidget {
                       ],)
                   ),
                   onTap: () {
-                    //navigateTo(context, EditDoctorProfile());
+                    navigateTo(context, EditStudentProfile());
                   },
                 ),
                 const SizedBox(
@@ -126,17 +129,19 @@ class StudentProfile extends StatelessWidget {
                         Padding(
                           padding:const EdgeInsets.all(20.0),
                           child: Text("Previous Session",
-                            style: getSemiBoldStyle(color: ColorManager.darkGray,fontSize: 18) ,),
+                            style: getSemiBoldStyle(color: ColorManager.darkGray,fontSize: 18),
+                          ),
                         ),
                         const Spacer(),
                         const Padding(
                           padding: EdgeInsets.all(8.0),
                           child: Icon(IconBroken.Arrow___Right_2),
                         ),
-                      ],)
+                       ],
+                      ),
                   ),
                   onTap: () {
-                    //navigateTo(context, ViewFeedbacks());
+                    navigateTo(context, PreviousSession());
                   },
                 ),
                 SizedBox(

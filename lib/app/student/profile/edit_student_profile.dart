@@ -7,10 +7,9 @@ import '../../../styles/icons_broken.dart';
 import '../../resources/assets_manager.dart';
 import '../../resources/color_manager.dart';
 import '../../resources/styles_manager.dart';
-import '../home/home_doctor_view.dart';
 
-class CreateDoctorAccount extends StatelessWidget {
-  CreateDoctorAccount({Key? key}) : super(key: key);
+class EditStudentProfile extends StatelessWidget {
+  EditStudentProfile({Key? key}) : super(key: key);
   var formKey = GlobalKey<FormState>();
   var nameController = TextEditingController();
   var phoneController = TextEditingController();
@@ -21,6 +20,7 @@ class CreateDoctorAccount extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: ColorManager.background,
+      appBar: AppBar(title: Text('Edit Profile')),
       body: SafeArea(
         child: Form(
           key: formKey,
@@ -29,7 +29,7 @@ class CreateDoctorAccount extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 SizedBox(
-                  height: 170,
+                  height: 150,
                   child: Stack(
                     alignment: Alignment.topCenter,
                     children: [
@@ -51,7 +51,7 @@ class CreateDoctorAccount extends StatelessWidget {
                               CircleAvatar(
                                 radius: 58,
                                 backgroundColor:
-                                    Theme.of(context).scaffoldBackgroundColor,
+                                Theme.of(context).scaffoldBackgroundColor,
                                 child: const CircleAvatar(
                                   radius: 55,
                                   backgroundImage: AssetImage(
@@ -83,13 +83,6 @@ class CreateDoctorAccount extends StatelessWidget {
                   padding: const EdgeInsets.all(20.0),
                   child: Column(
                     children: [
-                      Text(
-                        'Create Account',
-                        style: getBoldStyle(color: Colors.black, fontSize: 20),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
                       defaultFormField(
                           controller: nameController,
                           label: 'Name',
@@ -152,7 +145,7 @@ class CreateDoctorAccount extends StatelessWidget {
                       ),
                       Row(children: [
                         Radio(
-                          activeColor: ColorManager.primary,
+                            activeColor: ColorManager.primary,
                             focusColor:ColorManager.primary ,value: 1, groupValue: _value, onChanged: (value){
 
                         }),
@@ -176,7 +169,7 @@ class CreateDoctorAccount extends StatelessWidget {
                           child: ConditionalBuilder(
                             condition: true, //TODO loading state
                             builder: (context) => const Text(
-                              'Create Account',
+                              'Save Changes',
                               style: TextStyle(
                                 color: Colors.white,
                               ),
@@ -191,8 +184,8 @@ class CreateDoctorAccount extends StatelessWidget {
                             ),
                           ),
                           onPressed: () {
-                            //TODO create press
-                            navigateAndFinish(context, HomeDoctorView());
+                            //TODO login press
+                            //navigateTo(context, HomeDoctorView());
                           },
                         ),
                       ),

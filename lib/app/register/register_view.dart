@@ -1,9 +1,6 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:mind_space/app/admin/home/home_admin_view.dart';
-import 'package:mind_space/app/doctor/create_account/create_account.dart';
+import 'package:mind_space/app/create_account/create_account.dart';
 import 'package:mind_space/app/resources/styles_manager.dart';
 import '../../shared/components/component.dart';
 import '../resources/assets_manager.dart';
@@ -18,14 +15,10 @@ class RegisterView extends StatefulWidget {
 
 class _RegisterViewState extends State<RegisterView> {
   var emailController = TextEditingController();
-
   var passwordController = TextEditingController();
-
   var conFirmPasswordController = TextEditingController();
-
   var formKey = GlobalKey<FormState>();
-
-  List<bool> isSelected = [false, false];
+  List<bool> isSelected = [true, false];
 
   @override
   Widget build(BuildContext context) {
@@ -182,7 +175,11 @@ class _RegisterViewState extends State<RegisterView> {
                         ),
                         onPressed: () {
                           //TODO Register press
-                          navigateTo(context, CreateDoctorAccount());
+                          if(isSelected[0]){
+                            navigateTo(context, CreateAccount('Doctor'));
+                          }else{
+                            navigateTo(context, CreateAccount('Student'));
+                          }
                         },
                       ),
                     ),
