@@ -259,20 +259,6 @@ class AppointmentManagement extends StatelessWidget {
                         style: getRegularStyle(color: ColorManager.white),
                       ),
                     ),
-                    const SizedBox(
-                      width: 5,
-                    ),
-                    TextButton(
-                      style: const ButtonStyle(
-                          backgroundColor: MaterialStatePropertyAll(Colors.red)),
-                      onPressed: () {
-                        //ToDo block user
-                      },
-                      child: Text(
-                        "Delete",
-                        style: getRegularStyle(color: ColorManager.white),
-                      ),
-                    ),
                     const Spacer(),
                   ],
                 ),

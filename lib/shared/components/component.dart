@@ -20,7 +20,7 @@ Widget defaultFormField({
   bool isPassword = false,
 }) =>
     SizedBox(
-      height: 50,
+      height: 70,
       child: TextFormField(
         controller: controller,
         obscureText: isPassword,

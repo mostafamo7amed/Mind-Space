@@ -23,9 +23,6 @@ class HomeDoctorView extends StatelessWidget {
           return Scaffold(
             backgroundColor: ColorManager.background,
             appBar: AppBar(
-              title: Text(
-                cubit.titles[cubit.currentIndex],
-              ),
               actions: [
                 IconButton(
                   onPressed: () {

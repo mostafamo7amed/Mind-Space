@@ -1,12 +1,19 @@
+import 'package:bloc/bloc.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-
+import 'package:mind_space/shared/network/local/cache_helper.dart';
+import 'package:mind_space/shared/observer/blocObserver.dart';
 import 'app/resources/theme_manager.dart';
 import 'app/splash/splash_view.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  Bloc.observer = MyBlocObserver();
+  await Firebase.initializeApp();
+  await CacheHelper.init();
+
+
   runApp(const MyApp());
 }
 

@@ -9,21 +9,5 @@ class StudentCubit extends Cubit<StudentStates> {
 
   int currentIndex = 0;
 
-  List<Widget> screens = [
-
-  ];
-
-  List<String> titles = [
-    'Appointment',
-    'Accepted appointment',
-    'Group session',
-    'Profile',
-  ];
-
-  void changeBottomNav(int index) {
-    currentIndex = index;
-    emit(StudentBottomNavState());
-  }
-
 
 }

@@ -48,11 +48,11 @@ class UserManagement extends StatelessWidget {
                     child: Align(
                       alignment: Alignment.topRight,
                       child: CircleAvatar(
-                        radius: 48,
+                        radius: 38,
                         backgroundColor:
                             Theme.of(context).scaffoldBackgroundColor,
                         child: const CircleAvatar(
-                          radius: 45,
+                          radius: 35,
                           backgroundImage: AssetImage(
                             ImageAssets.photo,
                           ),

@@ -1,6 +1,4 @@
-import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:mind_space/shared/components/component.dart';
 import '../../../../styles/icons_broken.dart';
 import '../../../resources/assets_manager.dart';
@@ -11,8 +9,7 @@ import '../../../resources/styles_manager.dart';
 class CompleteIndividualAppointment extends StatelessWidget {
   String appointmentType;
   CompleteIndividualAppointment(this.appointmentType,{Key? key}) : super(key: key);
-  var dateController = TextEditingController();
-  var timeController =TextEditingController();
+  var nameController = TextEditingController();
   var formKey = GlobalKey<FormState>();
 
   @override
@@ -61,138 +58,157 @@ class CompleteIndividualAppointment extends StatelessWidget {
             ),
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.all(20.0),
+                padding: const EdgeInsets.only(right: 20,left: 20,top: 10),
                 child: SingleChildScrollView(
                   physics: BouncingScrollPhysics(),
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      defaultFormField(
-                        controller: timeController,
-                        label: 'Appointment Time',
-                        prefix: Icon(Icons.watch_later_outlined,color: ColorManager.primary,),
-                        onTap: (){
-                          showTimePicker(
-                              context: context,
-                              initialTime: TimeOfDay.now(),
-                            builder: (context, child) {
-                              return Theme(
-                                data: ThemeData.dark().copyWith(
-                                  colorScheme: ColorScheme.dark(
-                                    primary: Colors.grey,
-                                    onPrimary: Colors.black,
-                                    surface: ColorManager.white,
-                                    onSurface: ColorManager.darkPrimary,
-                                  ),
-                                  dialogBackgroundColor:Colors.white,
-                                ),
-                                child: child!,
-                              );
-                            },
-                          ).then((value) {
-                            if(value != null) {
-                              timeController.text = value.format(context);
-                            }else {
-                              timeController.text = '';
-                            }
-                          });
-
-                        },
-                        validate: (value){
-                          if(value.isEmpty){
-                            return 'Time can\'t be empty';
-                          }
-                          return null;
-                        },
-                        type: TextInputType.number, context: context,
-                      ),
-                      const SizedBox(
-                        height: 15,
-                      ),
-                      defaultFormField(
-                          controller: dateController,
-                          label: 'Appointment Date',
-                          prefix: Icon(Icons.calendar_today,color: ColorManager.primary,),
-                          onTap: (){
-                            showDatePicker(
-                                context: context,
-                                initialDate: DateTime.now(),
-                                firstDate: DateTime.now(),
-                                lastDate: DateTime.parse('2050-11-11'),
-                                builder: (context, child) {
-                                  return Theme(
-                                    data: ThemeData.dark().copyWith(
-                                      colorScheme: ColorScheme.dark(
-                                        primary: Colors.grey,
-                                        onPrimary: Colors.black,
-                                        surface: ColorManager.primary,
-                                        onSurface: ColorManager.darkPrimary,
-                                      ),
-                                      dialogBackgroundColor:Colors.white,
-                                    ),
-                                    child: child!,
-                                  );
-                                },
-                            ).then((value) {
-                              if(value != null) {
-                                dateController.text = DateFormat.yMMMd().format(value).toString();
-                              }else {
-                                dateController.text = '';
-                              }
-                            });
-
-
-                          },
-                          validate: (value){
-                            if(value.isEmpty){
-                              return 'Date can\'t be empty';
-                            }
-                            return null;
-                          },
-                          type: TextInputType.number, context: context),
-                      SizedBox(height:10,),
                       Container(
-                        width: double.infinity,
-                        height: 40,
+                        height: 210,
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(7),
-                          color: ColorManager.primary,
+                          border: Border.all(width: 0.7,color: Colors.grey),
                         ),
-                        child: MaterialButton(
-                          child: ConditionalBuilder(
-                            condition: true, //TODO loading state
-                            builder: (context) => const Text(
-                              'Book',
-                              style: TextStyle(
-                                color: Colors.white,
-                              ),
-                            ),
-                            fallback: (context) => const SizedBox(
-                              height: 25,
-                              width: 25,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 3,
-                                backgroundColor: Colors.white,
-                              ),
+                        child: CalendarDatePicker(
+                            initialDate: DateTime.now(),
+                            firstDate: DateTime.now(),
+                            lastDate: DateTime.parse('2050-11-11'),
+                            onDateChanged: (value) {
+
+                            },
+                        ),
+                      ),
+                      SizedBox(height: 10,),
+                      Text('Available Today',style: getRegularStyle(color: ColorManager.darkGray,fontSize: 20),),
+                      SizedBox(height: 10,),
+                      InkWell(
+                        onTap: () {
+                          if(appointmentType == 'Online'){
+                            showModalBottomSheet(
+                              backgroundColor: ColorManager.background,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.only(
+                                      topRight: Radius.circular(10),
+                                      topLeft: Radius.circular(10))),
+                              context: context,
+                              builder: (context) =>
+                                  bottomSheetBuilder(context),
+                            );
+                          }
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.grey[300],
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: Row(
+                              children: [
+                                Text('Book appointment',style: getRegularStyle(color: ColorManager.darkGray,fontSize: 16),),
+                                Spacer(),
+                                Text('10:00 AM',style: getRegularStyle(color: ColorManager.darkGray,fontSize: 16),),
+                              ],
                             ),
                           ),
-                          onPressed: () {
-
-                            //todo booking
-                            if(appointmentType == 'Online'){
-                              showModalBottomSheet(
-                                backgroundColor: ColorManager.background,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.only(
-                                        topRight: Radius.circular(10),
-                                        topLeft: Radius.circular(10))),
-                                context: context,
-                                builder: (context) =>
-                                    bottomSheetBuilder(context),
-                              );
-                            }
-                          },
                         ),
-                      )
+                      ),
+                      SizedBox(height: 10,),
+                      InkWell(
+                        onTap: () {
+                          if(appointmentType == 'Online'){
+                            showModalBottomSheet(
+                              backgroundColor: ColorManager.background,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.only(
+                                      topRight: Radius.circular(10),
+                                      topLeft: Radius.circular(10))),
+                              context: context,
+                              builder: (context) =>
+                                  bottomSheetBuilder(context),
+                            );
+                          }
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.grey[300],
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: Row(
+                              children: [
+                                Text('Book appointment',style: getRegularStyle(color: ColorManager.darkGray,fontSize: 16),),
+                                Spacer(),
+                                Text('11:00 AM',style: getRegularStyle(color: ColorManager.darkGray,fontSize: 16),),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 10,),
+                      InkWell(
+                        onTap: () {
+                          if(appointmentType == 'Online'){
+                            showModalBottomSheet(
+                              backgroundColor: ColorManager.background,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.only(
+                                      topRight: Radius.circular(10),
+                                      topLeft: Radius.circular(10))),
+                              context: context,
+                              builder: (context) =>
+                                  bottomSheetBuilder(context),
+                            );
+                          }
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.grey[300],
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: Row(
+                              children: [
+                                Text('Book appointment',style: getRegularStyle(color: ColorManager.darkGray,fontSize: 16),),
+                                Spacer(),
+                                Text('1:00 AM',style: getRegularStyle(color: ColorManager.darkGray,fontSize: 16),),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 10,),
+                      InkWell(
+                        onTap: () {
+                          if(appointmentType == 'Online'){
+                            showModalBottomSheet(
+                              backgroundColor: ColorManager.background,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.only(
+                                      topRight: Radius.circular(10),
+                                      topLeft: Radius.circular(10))),
+                              context: context,
+                              builder: (context) =>
+                                  bottomSheetBuilder(context),
+                            );
+                          }
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.grey[300],
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: Row(
+                              children: [
+                                Text('Book appointment',style: getRegularStyle(color: ColorManager.darkGray,fontSize: 16),),
+                                Spacer(),
+                                Text('3:00 AM',style: getRegularStyle(color: ColorManager.darkGray,fontSize: 16),),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 10,),
                     ],
                   ),
                 ),
@@ -286,10 +302,83 @@ class CompleteIndividualAppointment extends StatelessWidget {
               )),
           onTap: () {
             Navigator.pop(context);
+            addNicknameDialog(context);
           },
         ),
         SizedBox(height: 15,),
       ],
     ),
+  );
+
+
+  Future addNicknameDialog(context) => showDialog(
+    context: context,
+    builder: (context) {
+      return Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                children: [
+                  Spacer(),
+                  ImageIcon(AssetImage(ImageAssets.point),
+                    size: 12,
+                    color: ColorManager.error,
+                  ),
+                ],
+              ),
+              Text(
+                "Add Nickname",
+                style: getBoldStyle(
+                    color: ColorManager.darkGray, fontSize: 18),
+              ),
+              SizedBox(height: 15,),
+              defaultFormField(
+                  controller: nameController,
+                  label: 'Nickname',
+                  validate: (value){
+                    if(value.isEmpty){
+                      return 'Nickname can not be empty';
+                    }
+                    return null;
+                  },
+                  type: TextInputType.text,
+                  context: context),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  TextButton(
+                    style: ButtonStyle(
+                        shape: MaterialStatePropertyAll(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(50),
+                          ),
+                        ),
+                        backgroundColor:
+                        MaterialStatePropertyAll(Colors.green)),
+                    onPressed: () {
+                      //ToDo view user
+                    },
+                    child: Text(
+                      "Book",
+                      style: getRegularStyle(color: ColorManager.white),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: 10,
+              ),
+            ],
+          ),
+        ),
+      );
+    },
   );
 }

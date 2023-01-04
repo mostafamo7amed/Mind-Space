@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:mind_space/app/admin/home/home_admin_view.dart';
@@ -80,13 +81,18 @@ class ForgetPasswordView extends StatelessWidget {
                           ),
                         ),
                         onPressed: () {
-                          //TODO login press
-                          //navigateTo(context, const HomeAdminView());
+                          if(formKey.currentState!.validate()){
+                            FirebaseAuth.instance.sendPasswordResetEmail(email: emailController.text).then((value) {
+                              toast(message: 'Check your mail', data: ToastStates.success);
+                            }).catchError((e){
+                              toast(message: e.toString(), data: ToastStates.error);
+                            });
+                          }
                         },
                       ),
                     ),
                     // support messages
-                    SizedBox(
+                    /*SizedBox(
                       height: 150,
                       width: 200,
                       child: Align(
@@ -113,7 +119,7 @@ class ForgetPasswordView extends StatelessWidget {
                               ],
                             )),
                       ),
-                    ),
+                    ),*/
                   ],
                 ),
               ),

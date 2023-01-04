@@ -29,7 +29,7 @@ class EditStudentProfile extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 SizedBox(
-                  height: 150,
+                  height: 140,
                   child: Stack(
                     alignment: Alignment.topCenter,
                     children: [
@@ -49,11 +49,11 @@ class EditStudentProfile extends StatelessWidget {
                             alignment: Alignment.bottomCenter,
                             children: [
                               CircleAvatar(
-                                radius: 58,
+                                radius: 45,
                                 backgroundColor:
                                 Theme.of(context).scaffoldBackgroundColor,
                                 child: const CircleAvatar(
-                                  radius: 55,
+                                  radius: 43,
                                   backgroundImage: AssetImage(
                                     ImageAssets.photo,
                                   ),
@@ -94,9 +94,6 @@ class EditStudentProfile extends StatelessWidget {
                           },
                           type: TextInputType.text,
                           context: context),
-                      const SizedBox(
-                        height: 10,
-                      ),
                       defaultFormField(
                           context: context,
                           controller: phoneController,
@@ -112,9 +109,6 @@ class EditStudentProfile extends StatelessWidget {
                           },
                           isPassword: true,
                           type: TextInputType.number),
-                      const SizedBox(
-                        height: 10,
-                      ),
                       defaultFormField(
                           controller: departController,
                           label: 'Department',
@@ -126,9 +120,6 @@ class EditStudentProfile extends StatelessWidget {
                           },
                           type: TextInputType.text,
                           context: context),
-                      const SizedBox(
-                        height: 10,
-                      ),
                       defaultFormField(
                           controller: dateController,
                           label: 'Date',
@@ -140,10 +131,8 @@ class EditStudentProfile extends StatelessWidget {
                           },
                           type: TextInputType.datetime,
                           context: context),
-                      const SizedBox(
-                        height: 5,
-                      ),
                       Row(children: [
+                        Text('Gender ',style: getRegularStyle(color: ColorManager.black, fontSize: 16),),
                         Radio(
                             activeColor: ColorManager.primary,
                             focusColor:ColorManager.primary ,value: 1, groupValue: _value, onChanged: (value){

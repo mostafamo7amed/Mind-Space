@@ -1,12 +1,16 @@
 import 'dart:async';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mind_space/app/doctor/home/home_doctor_view.dart';
 import 'package:mind_space/app/resources/assets_manager.dart';
 import 'package:mind_space/shared/components/component.dart';
+import 'package:mind_space/shared/network/local/cache_helper.dart';
+import '../admin/home/home_admin_view.dart';
 import '../login/login_view.dart';
 import '../resources/color_manager.dart';
 import '../resources/constants_manager.dart';
+import '../student/home/home_student_view.dart';
 
 class SplashView extends StatefulWidget {
   const SplashView({Key? key}) : super(key: key);
@@ -39,12 +43,29 @@ class _SplashViewState extends State<SplashView> {
   }
 
   _goNext() {
-    navigateAndFinish(context, LoginView());
+    if(CacheHelper.getData(key: 'uid')!=null){
+      uid = CacheHelper.getData(key: 'uid');
+    }
+    if(uid.isNotEmpty){
+      findUserType(uid, context);
+    }else{
+      navigateAndFinish(context, LoginView());
+    }
   }
 
   @override
   void dispose() {
     _timer!.cancel();
     super.dispose();
+  }
+
+  findUserType(String UID,context){
+    if(FirebaseFirestore.instance.collection('admin').doc(UID).id==UID){
+      navigateAndFinish(context, HomeAdminView());
+    }else if(FirebaseFirestore.instance.collection('doctor').doc(UID).id==UID){
+      navigateAndFinish(context, HomeDoctorView());
+    }else if(FirebaseFirestore.instance.collection('student').doc(UID).id==UID){
+      navigateAndFinish(context, HomeStudentView());
+    }
   }
 }

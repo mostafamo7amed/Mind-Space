@@ -336,15 +336,16 @@ class GroupAppointment extends StatelessWidget {
                   padding:
                   const EdgeInsets.only(left: 10.0, right: 10.0, top: 10.0),
                   child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Address : ",
+                        "Title : ",
                         style: getSemiBoldStyle(
                             color: ColorManager.darkGray, fontSize: 16),
                       ),
                       Expanded(
                         child: Text(
-                          "Riyadh",
+                          "Depression",
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: getSemiBoldStyle(
@@ -545,13 +546,13 @@ class GroupAppointment extends StatelessWidget {
                   child: Row(
                     children: [
                       Text(
-                        "Address : ",
+                        "Title : ",
                         style: getSemiBoldStyle(
                             color: ColorManager.darkGray, fontSize: 16),
                       ),
                       Expanded(
                         child: Text(
-                          "Riyadh",
+                          "Depression",
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: getSemiBoldStyle(

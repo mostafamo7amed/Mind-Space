@@ -24,32 +24,17 @@ class AddGroupSession extends StatelessWidget {
         child: Form(
           key: formKey,
           child: SingleChildScrollView(
+            physics: BouncingScrollPhysics(),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                SizedBox(
-                  height: 100,
-                  child: Stack(
-                    alignment: Alignment.topCenter,
-                    children: [
-                      Align(
-                        alignment: Alignment.topCenter,
-                        child: SvgPicture.asset(
-                          ImageAssets.wave,
-                          alignment: Alignment.topCenter,
-                          fit: BoxFit.fill,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
                 Padding(
                   padding: const EdgeInsets.all(20.0),
                   child: Column(
                     children: [
                       defaultFormField(
                           controller: addressController,
-                          label: 'Address',
+                          label: 'Title',
                           validate: (value) {
                             if (value!.isEmpty) {
                               return 'Name can\'t be empty';
@@ -58,9 +43,6 @@ class AddGroupSession extends StatelessWidget {
                           },
                           type: TextInputType.text,
                           context: context),
-                      const SizedBox(
-                        height: 10,
-                      ),
                       defaultFormField(
                           context: context,
                           controller: descriptionController,
@@ -76,9 +58,6 @@ class AddGroupSession extends StatelessWidget {
                           },
                           isPassword: true,
                           type: TextInputType.text),
-                      const SizedBox(
-                        height: 10,
-                      ),
                       defaultFormField(
                           controller: dateController,
                           label: 'Date',
@@ -90,9 +69,6 @@ class AddGroupSession extends StatelessWidget {
                           },
                           type: TextInputType.datetime,
                           context: context),
-                      const SizedBox(
-                        height: 10,
-                      ),
                       defaultFormField(
                           controller: timeController,
                           label: 'Time',
@@ -104,9 +80,6 @@ class AddGroupSession extends StatelessWidget {
                           },
                           type: TextInputType.datetime,
                           context: context),
-                      const SizedBox(
-                        height: 10,
-                      ),
                       defaultFormField(
                           controller: linkController,
                           label: 'Link',
@@ -118,9 +91,6 @@ class AddGroupSession extends StatelessWidget {
                           },
                           type: TextInputType.text,
                           context: context),
-                      const SizedBox(
-                        height: 5,
-                      ),
                       Container(
                         width: double.infinity,
                         height: 40,
