@@ -1,12 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:mind_space/app/admin/home/home_admin_view.dart';
 import 'package:mind_space/app/resources/styles_manager.dart';
 import '../../shared/components/component.dart';
-import '../../styles/icons_broken.dart';
 import '../resources/assets_manager.dart';
 import '../resources/color_manager.dart';
 
@@ -17,7 +13,11 @@ class ForgetPasswordView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ColorManager.white,      body: SafeArea(
+      appBar: AppBar(
+        title: Text('Reset password'),
+      ),
+      backgroundColor: ColorManager.white,
+      body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Center(
@@ -28,19 +28,12 @@ class ForgetPasswordView extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     SizedBox(
-                      height: 200,
+                      height: 150,
                       width: 200,
                       child: Image.asset(ImageAssets.splashLogo),
                     ),
                     const SizedBox(
                       height: 10,
-                    ),
-                    Text(
-                      'Reset password',
-                      style: getBoldStyle(color: Colors.black, fontSize: 18),
-                    ),
-                    const SizedBox(
-                      height: 15,
                     ),
                     defaultFormField(
                       context: context,
@@ -54,9 +47,6 @@ class ForgetPasswordView extends StatelessWidget {
                         return null;
                       },
                       type: TextInputType.emailAddress,
-                    ),
-                    const SizedBox(
-                      height: 10,
                     ),
                     Container(
                       width: double.infinity,
@@ -83,7 +73,7 @@ class ForgetPasswordView extends StatelessWidget {
                         onPressed: () {
                           if(formKey.currentState!.validate()){
                             FirebaseAuth.instance.sendPasswordResetEmail(email: emailController.text).then((value) {
-                              toast(message: 'Check your mail', data: ToastStates.success);
+                              toast(message: 'Check your mail to reset your password', data: ToastStates.success);
                             }).catchError((e){
                               toast(message: e.toString(), data: ToastStates.error);
                             });

@@ -17,6 +17,7 @@ Widget defaultFormField({
   onTap,
   onSubmit,
   onChange,
+  Iterable<String>? autofill,
   bool isPassword = false,
 }) =>
     SizedBox(
@@ -49,6 +50,7 @@ Widget defaultFormField({
         validator: validate,
         keyboardType: type,
         textAlignVertical: TextAlignVertical.center,
+        autofillHints: autofill,
       ),
     );
 

@@ -6,6 +6,7 @@ import 'package:mind_space/app/register/register_cubit/cubit.dart';
 import 'package:mind_space/app/register/register_cubit/states.dart';
 import 'package:mind_space/app/resources/styles_manager.dart';
 import '../../shared/components/component.dart';
+import '../../shared/network/local/cache_helper.dart';
 import '../resources/assets_manager.dart';
 import '../resources/color_manager.dart';
 
@@ -28,7 +29,22 @@ class _RegisterViewState extends State<RegisterView> {
     return BlocProvider(
       create: (context) => RegisterCubit(),
       child: BlocConsumer<RegisterCubit, RegisterStates>(
-        listener: (context, state) {},
+        listener: (context, state) {
+          if(state is RegisterSuccessState){
+            CacheHelper.saveData(key: 'uid', data: state.id);
+            String userType  ='';
+            userType = isSelected[0]==true? 'Doctor':'Student';
+            print('============= user type $userType ================');
+            navigateTo(context,
+              CreateAccount(
+                state.id,
+                userType,
+                emailController.text,
+                passwordController.text,
+              ),
+            );
+          }
+        },
         builder: (context, state) {
           var cubit = RegisterCubit.getCubit(context);
           return Scaffold(
@@ -66,8 +82,10 @@ class _RegisterViewState extends State<RegisterView> {
                                 Icon(Icons.email, color: ColorManager.primary),
                             controller: emailController,
                             validate: (value) {
-                              if (value!.isEmpty) {
-                                return 'email can\'t be empty';
+                              if (value!.isEmpty ||
+                                  !RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w]{2,4}')
+                                      .hasMatch(value!)) {
+                                return 'Please enter valid email address';
                               }
                               return null;
                             },
@@ -81,7 +99,7 @@ class _RegisterViewState extends State<RegisterView> {
                                   Icon(Icons.lock, color: ColorManager.primary),
                               validate: (value) {
                                 if (value!.isEmpty) {
-                                  return 'password can\'t be empty';
+                                  return 'Please enter password';
                                 }
                                 return null;
                               },
@@ -91,7 +109,7 @@ class _RegisterViewState extends State<RegisterView> {
                               pressedShow: () {
                                 cubit.changePasswordVisibility();
                               },
-                              isPassword: true,
+                              isPassword: cubit.isPassword,
                               type: TextInputType.visiblePassword),
                           defaultFormField(
                               context: context,
@@ -101,7 +119,9 @@ class _RegisterViewState extends State<RegisterView> {
                                   Icon(Icons.lock, color: ColorManager.primary),
                               validate: (value) {
                                 if (value!.isEmpty) {
-                                  return 'password can\'t be empty';
+                                  return 'Please confirm password';
+                                }else if(passwordController.text!=conFirmPasswordController.text){
+                                  return 'Password not matches';
                                 }
                                 return null;
                               },
@@ -111,7 +131,7 @@ class _RegisterViewState extends State<RegisterView> {
                               pressedShow: () {
                                 cubit.changePassword2Visibility();
                               },
-                              isPassword: true,
+                              isPassword: cubit.isPassword2,
                               type: TextInputType.visiblePassword),
                           Container(
                             height: 35,
@@ -121,7 +141,9 @@ class _RegisterViewState extends State<RegisterView> {
                             child: ToggleButtons(
                                 onPressed: (index) {
                                   setState(() {
-                                    for (int i = 0; i < isSelected.length; i++) {
+                                    for (int i = 0;
+                                        i < isSelected.length;
+                                        i++) {
                                       if (i == index) {
                                         isSelected[i] = true;
                                       } else {
@@ -168,8 +190,7 @@ class _RegisterViewState extends State<RegisterView> {
                             ),
                             child: MaterialButton(
                               child: ConditionalBuilder(
-                                condition: state
-                                    is! RegisterLoadingState, //TODO loading state
+                                condition: state is! RegisterLoadingState,
                                 builder: (context) => const Text(
                                   'Register',
                                   style: TextStyle(
@@ -186,28 +207,11 @@ class _RegisterViewState extends State<RegisterView> {
                                 ),
                               ),
                               onPressed: () {
-                               /* if (formKey.currentState!.validate()) {
+                                if (formKey.currentState!.validate()) {
                                   cubit.register(
                                       email: emailController.text,
-                                      password: passwordController.text);*/
-                                  if (isSelected[0] == true) {
-                                    navigateTo(
-                                        context,
-                                        CreateAccount(
-                                            '',
-                                            'Doctor',
-                                            emailController.text,
-                                            passwordController.text));
-                                  } else {
-                                    navigateTo(
-                                        context,
-                                        CreateAccount(
-                                            '',
-                                            'Student',
-                                            emailController.text,
-                                            passwordController.text));
-                                  }
-                               // }
+                                      password: passwordController.text);
+                                }
                               },
                             ),
                           ),

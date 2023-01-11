@@ -1,9 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:mind_space/app/admin/appointment_management/appointment_management.dart';
 import 'package:mind_space/app/admin/user_management/user_management.dart';
 import 'package:mind_space/app/login/login_view.dart';
 import 'package:mind_space/shared/components/component.dart';
+import 'package:mind_space/shared/network/local/cache_helper.dart';
 import '../../../styles/icons_broken.dart';
 import '../../resources/assets_manager.dart';
 import '../../resources/color_manager.dart';
@@ -21,6 +23,8 @@ class HomeAdminView extends StatelessWidget {
         actions: [
           IconButton(
             onPressed: () {
+              FirebaseAuth.instance.signOut();
+              CacheHelper.removeData(key: 'uid');
               navigateAndFinish(context, LoginView());
             },
             icon: const ImageIcon(
@@ -31,23 +35,62 @@ class HomeAdminView extends StatelessWidget {
         ],
       ),
       body: Column(children: [
-        Stack(
-          alignment: Alignment.topLeft,
-          children: [
-            SvgPicture.asset(
-              ImageAssets.wave,
-              height: 180,
-              fit: BoxFit.fill,
-              alignment: Alignment.topCenter,
-            ),
-            Padding(
-              padding: const EdgeInsets.all(25.0),
-              child: Text(
-                "Welcome",
-                style: getBoldStyle(color: ColorManager.white, fontSize: 30),
+        SizedBox(
+          height: 150,
+          child: Stack(
+            alignment: Alignment.topCenter,
+            children: [
+              Align(
+                alignment: Alignment.topCenter,
+                child: SvgPicture.asset(
+                  ImageAssets.wave,
+                  alignment: Alignment.topCenter,
+                  fit: BoxFit.fill,
+                ),
               ),
-            ),
-          ],
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 20.0,right: 20.0,bottom: 35),
+                  child: Row(
+                    children: [
+                      CircleAvatar(
+                        radius: 38,
+                        backgroundColor:
+                        Theme.of(context).scaffoldBackgroundColor,
+                        child: const CircleAvatar(
+                          radius: 35,
+                          backgroundImage: AssetImage(
+                            ImageAssets.photo,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 10,),
+                      Expanded(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Welcome",
+                              style: getBoldStyle(color: ColorManager.white, fontSize: 30),
+                            ),
+                            Text(
+                              "examole@example.org",
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: getSemiBoldStyle(
+                                  color: ColorManager.darkGray, fontSize: 18),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
         Center(
           child: Padding(

@@ -37,17 +37,37 @@ class LoginCubit extends Cubit<LoginStates> {
   }
 
 
-  findUserType(String UID,context){
-    if(FirebaseFirestore.instance.collection('admin').doc(UID).id==UID){
-      navigateAndFinish(context, HomeAdminView());
-    }else if(FirebaseFirestore.instance.collection('doctor').doc(UID).id==UID){
-      navigateAndFinish(context, HomeDoctorView());
-    }else if(FirebaseFirestore.instance.collection('student').doc(UID).id==UID){
-      navigateAndFinish(context, HomeStudentView());
-    }
-    emit(LoginNavigateState());
-    toast(message:UID.toString(), data: ToastStates.success);
+  findUser(String UID,context){
+    FirebaseFirestore.instance.collection('admin').where('id',isEqualTo: UID).get().then((value) {
+      print(value.docs.toString());
+      if(value.docs.isNotEmpty){
+        navigateAndFinish(context, HomeAdminView());
+        emit(LoginNavigateState());
+      }else{
+        FirebaseFirestore.instance.collection('Doctor').where('id',isEqualTo: UID).get().then((value) {
+          print(value.docs.toString());
+          if(value.docs.isNotEmpty){
+            navigateAndFinish(context, HomeDoctorView());
+            emit(LoginNavigateState());
+          }else{
+            FirebaseFirestore.instance.collection('Student').where('id',isEqualTo: UID).get().then((value) {
+              print(value.docs.toString());
+              if(value.docs.isNotEmpty){
+                navigateAndFinish(context, HomeStudentView());
+                emit(LoginNavigateState());
+              }
+            }).catchError((e){
 
+            });
+          }
+        }).catchError((e){
+
+        });
+      }
+    }).catchError((e){
+
+    });
+    toast(message: 'User not found', data: ToastStates.warning);
   }
 
 }

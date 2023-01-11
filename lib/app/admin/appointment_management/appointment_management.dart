@@ -250,7 +250,8 @@ class AppointmentManagement extends StatelessWidget {
                     ),
                     TextButton(
                       style: const ButtonStyle(
-                          backgroundColor: MaterialStatePropertyAll(Colors.red)),
+                          backgroundColor: MaterialStatePropertyAll(Colors.red),
+                      ),
                       onPressed: () {
                         //ToDo block user
                       },

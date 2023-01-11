@@ -7,7 +7,6 @@ import 'package:mind_space/app/register/register_view.dart';
 import 'package:mind_space/app/resources/styles_manager.dart';
 import '../../shared/components/component.dart';
 import '../../shared/network/local/cache_helper.dart';
-import '../admin/home/home_admin_view.dart';
 import '../resources/assets_manager.dart';
 import '../resources/color_manager.dart';
 import 'login_cubit/cubit.dart';
@@ -25,7 +24,8 @@ class LoginView extends StatelessWidget {
         listener: (context, state) {
           if(state is LoginSuccessState){
             CacheHelper.saveData(key: 'uid', data: state.uid);
-            LoginCubit.getCubit(context).findUserType(state.uid, context);
+            print('state id == ${state.uid}');
+            LoginCubit.getCubit(context).findUser(state.uid, context);
           }
         },
         builder: (context, state) {
@@ -63,12 +63,13 @@ class LoginView extends StatelessWidget {
                             prefix: Icon(Icons.email,color: ColorManager.primary),
                             controller: emailController,
                             validate: (value) {
-                              if (value!.isEmpty) {
-                                return 'email can\'t be empty';
+                              if (value!.isEmpty|| !RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w]{2,4}').hasMatch(value!)) {
+                                return 'Please enter valid email address ';
                               }
                               return null;
                             },
                             type: TextInputType.emailAddress,
+                            autofill: [AutofillHints.email],
                           ),
                           const SizedBox(
                             height: 5.0,
@@ -80,7 +81,7 @@ class LoginView extends StatelessWidget {
                               prefix: Icon(Icons.lock, color: ColorManager.primary),
                               validate: (value) {
                                 if (value!.isEmpty) {
-                                  return 'password can\'t be empty';
+                                  return 'Please enter correct password';
                                 }
                                 return null;
                               },
@@ -131,10 +132,9 @@ class LoginView extends StatelessWidget {
                                 ),
                               ),
                               onPressed: () {
-                               /* if(formKey.currentState!.validate()){
+                                if(formKey.currentState!.validate()){
                                   cubit.userLogin(email: emailController.text, password: passwordController.text,context: context);
-                                }*/
-                                navigateTo(context, HomeAdminView());
+                                }
                               },
                             ),
                           ),
