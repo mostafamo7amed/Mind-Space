@@ -67,7 +67,6 @@ class LoginCubit extends Cubit<LoginStates> {
     }).catchError((e){
 
     });
-    toast(message: 'User not found', data: ToastStates.warning);
   }
 
 }
