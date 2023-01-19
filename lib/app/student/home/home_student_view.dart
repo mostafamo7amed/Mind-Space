@@ -1,10 +1,11 @@
+import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:mind_space/app/student/appointment/group/group_appointment.dart';
 import 'package:mind_space/app/student/appointment/individual/individual_appointment.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../../../shared/components/component.dart';
+import '../../../shared/network/local/cache_helper.dart';
 import '../../../styles/icons_broken.dart';
 import '../../login/login_view.dart';
 import '../../resources/assets_manager.dart';
@@ -20,31 +21,36 @@ class HomeStudentView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => StudentCubit(),
-      child: BlocConsumer<StudentCubit, StudentStates>(
-        listener: (context, state) {},
-        builder: (context, state) {
-          return DefaultTabController(
-            length: 2,
-            child: Scaffold(
-              backgroundColor: ColorManager.background,
-              appBar: AppBar(
-                actions: [
-                  IconButton(
-                    onPressed: () {
-
-                      navigateAndFinish(context, LoginView());
-                    },
-                    icon: const ImageIcon(
-                      AssetImage(ImageAssets.shutdown),
-                      size: 25,
-                    ),
+    StudentCubit.getCubit(context).getStudent(CacheHelper.getData(key: 'uid'));
+    return BlocConsumer<StudentCubit, StudentStates>(
+      listener: (context, state) {},
+      builder: (context, state){
+        var cubit = StudentCubit.getCubit(context);
+        return DefaultTabController(
+          length: 2,
+          child: Scaffold(
+            backgroundColor: ColorManager.background,
+            appBar: AppBar(
+              actions: [
+                IconButton(
+                  onPressed: () {
+                    FirebaseAuth.instance.signOut();
+                    CacheHelper.removeData(key: 'uid');
+                    uid = '';
+                    print(CacheHelper.getData(key: 'uid'));
+                    navigateAndFinish(context, LoginView());
+                  },
+                  icon: const ImageIcon(
+                    AssetImage(ImageAssets.shutdown),
+                    size: 25,
                   ),
-                ],
-                elevation: 0.0,
-              ),
-              body: Column(
+                ),
+              ],
+              elevation: 0.0,
+            ),
+            body: ConditionalBuilder(
+              condition:cubit.studentModel!=null,
+              builder: (context) => Column(
                 children: [
                   Container(
                     height: 110,
@@ -71,13 +77,12 @@ class HomeStudentView extends StatelessWidget {
                             },
                             child: CircleAvatar(
                               radius: 28,
-                              backgroundColor:
-                                  Theme.of(context).scaffoldBackgroundColor,
-                              child: const CircleAvatar(
+                              backgroundColor: Theme.of(context)
+                                  .scaffoldBackgroundColor,
+                              child: CircleAvatar(
                                 radius: 25,
-                                backgroundImage: AssetImage(
-                                  ImageAssets.photo,
-                                ),
+                                backgroundImage: NetworkImage(
+                                    cubit.studentModel!.image!),
                               ),
                             ),
                           ),
@@ -90,183 +95,201 @@ class HomeStudentView extends StatelessWidget {
                   ),
                 ],
               ),
+              fallback: (context) => Center(
+                child: CircularProgressIndicator(
+                  strokeWidth: 3,
+                  backgroundColor: ColorManager.primary,
+                ),
+              ),
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 
   Widget allSession(context) => Container(
-    child: Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            'What Session You Want?',
-            style: getSemiBoldStyle(
-                color: ColorManager.darkPrimary, fontSize: 24),
-          ),
-          SizedBox(
-            height: 15,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
+        child: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              InkWell(
-                child: Container(
-                  height: 150,
-                  width: 150,
-                  child: Card(
-                    margin: const EdgeInsets.all(5),
-                    clipBehavior: Clip.antiAliasWithSaveLayer,
-                    elevation: 5,
-                    child: Center(
-                        child: Text(
-                          'Group\nSession',
-                          style: getSemiBoldStyle(
-                              color: ColorManager.darkPrimary,
-                              fontSize: 20),
-                        )),
-                  ),
-                ),
-                onTap: () {
-                  navigateTo(context, GroupAppointment());
-                },
+              Text(
+                'What Session You Want?',
+                style: getSemiBoldStyle(
+                    color: ColorManager.darkPrimary, fontSize: 24),
               ),
               SizedBox(
-                width: 10,
+                height: 15,
               ),
-              InkWell(
-                child: Container(
-                  height: 150,
-                  width: 150,
-                  child: Card(
-                    margin: const EdgeInsets.all(5),
-                    clipBehavior: Clip.antiAliasWithSaveLayer,
-                    elevation: 5,
-                    child: Center(
-                        child: Text(
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  InkWell(
+                    child: Container(
+                      height: 150,
+                      width: 150,
+                      child: Card(
+                        margin: const EdgeInsets.all(5),
+                        clipBehavior: Clip.antiAliasWithSaveLayer,
+                        elevation: 5,
+                        child: Center(
+                            child: Text(
+                          'Group\nSession',
+                          style: getSemiBoldStyle(
+                              color: ColorManager.darkPrimary, fontSize: 20),
+                        )),
+                      ),
+                    ),
+                    onTap: () {
+                      navigateTo(context, GroupAppointment());
+                    },
+                  ),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  InkWell(
+                    child: Container(
+                      height: 150,
+                      width: 150,
+                      child: Card(
+                        margin: const EdgeInsets.all(5),
+                        clipBehavior: Clip.antiAliasWithSaveLayer,
+                        elevation: 5,
+                        child: Center(
+                            child: Text(
                           'Individual\nSession',
                           style: getSemiBoldStyle(
-                              color: ColorManager.darkPrimary,
-                              fontSize: 20),
+                              color: ColorManager.darkPrimary, fontSize: 20),
                         )),
+                      ),
+                    ),
+                    onTap: () {
+                      showModalBottomSheet(
+                        backgroundColor: ColorManager.background,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.only(
+                                topRight: Radius.circular(10),
+                                topLeft: Radius.circular(10))),
+                        context: context,
+                        builder: (context) => bottomSheetBuilder(context),
+                      );
+                    },
                   ),
-                ),
-                onTap: () {
-                  showModalBottomSheet(
-                    backgroundColor: ColorManager.background,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.only(
-                            topRight: Radius.circular(10),
-                            topLeft: Radius.circular(10))),
-                    context: context,
-                    builder: (context) =>
-                        bottomSheetBuilder(context),
-                  );
-                },
+                ],
+              ),
+              SizedBox(
+                height: 60,
               ),
             ],
           ),
-          SizedBox(
-            height: 60,
-          ),
-        ],
-      ),
-    ),
-  );
+        ),
+      );
 
   Widget bottomSheetBuilder(context) => Padding(
-    padding: const EdgeInsets.all(8.0),
-    child: Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: SizedBox(
-            child: Container(
-              width: 90,
-              decoration: BoxDecoration(
-                  color: ColorManager.gray.withOpacity(0.3),
-                  borderRadius: BorderRadius.all(Radius.circular(3))
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: SizedBox(
+                child: Container(
+                  width: 90,
+                  decoration: BoxDecoration(
+                      color: ColorManager.gray.withOpacity(0.3),
+                      borderRadius: BorderRadius.all(Radius.circular(3))),
+                  height: 4,
+                ),
               ),
-              height: 4,
             ),
-          ),
+            Text(
+              'Choose an Option',
+              style: getSemiBoldStyle(color: ColorManager.black, fontSize: 18),
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            InkWell(
+              child: Card(
+                  margin: const EdgeInsets.all(5),
+                  clipBehavior: Clip.antiAliasWithSaveLayer,
+                  elevation: 3,
+                  child: Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Icon(
+                          IconBroken.Home,
+                          size: 30,
+                          color: ColorManager.gray,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Text(
+                          "At clinic",
+                          style: getSemiBoldStyle(
+                              color: ColorManager.gray, fontSize: 18),
+                        ),
+                      ),
+                      const Spacer(),
+                      Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Icon(
+                          IconBroken.Arrow___Right_2,
+                          color: ColorManager.gray,
+                        ),
+                      ),
+                    ],
+                  )),
+              onTap: () {
+                Navigator.pop(context);
+                navigateTo(context, IndividualAppointment('At clinic'));
+              },
+            ),
+            InkWell(
+              child: Card(
+                  margin: const EdgeInsets.all(5),
+                  clipBehavior: Clip.antiAliasWithSaveLayer,
+                  elevation: 3,
+                  child: Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Icon(
+                          IconBroken.Video,
+                          size: 35,
+                          color: ColorManager.gray,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Text(
+                          "Online",
+                          style: getSemiBoldStyle(
+                              color: ColorManager.gray, fontSize: 18),
+                        ),
+                      ),
+                      const Spacer(),
+                      Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Icon(
+                          IconBroken.Arrow___Right_2,
+                          color: ColorManager.gray,
+                        ),
+                      ),
+                    ],
+                  )),
+              onTap: () {
+                Navigator.pop(context);
+                navigateTo(context, IndividualAppointment('Online'));
+              },
+            ),
+            SizedBox(
+              height: 15,
+            ),
+          ],
         ),
-        Text(
-          'Choose an Option',
-          style:
-              getSemiBoldStyle(color: ColorManager.black, fontSize: 18),
-        ),
-        SizedBox(height: 10,),
-        InkWell(
-          child: Card(
-              margin: const EdgeInsets.all(5),
-              clipBehavior: Clip.antiAliasWithSaveLayer,
-              elevation: 3,
-              child: Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Icon(IconBroken.Home,size: 30,color: ColorManager.gray,),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: Text(
-                      "At clinic",
-                      style: getSemiBoldStyle(
-                          color: ColorManager.gray, fontSize: 18),
-                    ),
-                  ),
-                  const Spacer(),
-                  Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Icon(IconBroken.Arrow___Right_2,color: ColorManager.gray,),
-                  ),
-                ],
-              )),
-          onTap: () {
-            Navigator.pop(context);
-            navigateTo(context, IndividualAppointment('At clinic'));
-          },
-        ),
-        InkWell(
-          child: Card(
-              margin: const EdgeInsets.all(5),
-              clipBehavior: Clip.antiAliasWithSaveLayer,
-              elevation: 3,
-              child: Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Icon(IconBroken.Video,size: 35,color: ColorManager.gray,),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: Text(
-                      "Online",
-                      style: getSemiBoldStyle(
-                          color: ColorManager.gray, fontSize: 18),
-                    ),
-                  ),
-                  const Spacer(),
-                  Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Icon(IconBroken.Arrow___Right_2,color: ColorManager.gray,),
-                  ),
-                ],
-              )),
-          onTap: () {
-            Navigator.pop(context);
-            navigateTo(context, IndividualAppointment('Online'));
-          },
-        ),
-        SizedBox(height: 15,),
-      ],
-    ),
-  );
-
+      );
 }

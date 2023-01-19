@@ -1,6 +1,11 @@
+import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:mind_space/app/models/doctor.dart';
 import 'package:mind_space/app/student/appointment/individual/complete_individual_appointment.dart';
+import 'package:mind_space/app/student/home/home_student_cubit/cubit.dart';
+import 'package:mind_space/app/student/home/home_student_cubit/states.dart';
 import 'package:mind_space/shared/components/component.dart';
 
 import '../../../../styles/icons_broken.dart';
@@ -15,53 +20,67 @@ class IndividualAppointment extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Choose doctor'),
+    return BlocConsumer<StudentCubit,StudentStates>(
+      listener: (context, state) {},
+      builder: (context, state) {
+        var cubit  = StudentCubit.getCubit(context);
+        return Scaffold(
+          appBar: AppBar(
+            title: Text('Choose doctor'),
 
-      ),
-      body: Column(
-        children: [
-          Container(
-            height: 110,
-            decoration: BoxDecoration(
-              color: ColorManager.primary,
-              borderRadius: const BorderRadius.only(
-                  bottomLeft: Radius.circular(10),
-                  bottomRight: Radius.circular(10)),
-            ),
-            child: Align(
-              alignment: Alignment.bottomCenter,
-              child: Padding(
-                padding: const EdgeInsets.only(
-                    left: 14.0, right: 14, bottom: 15),
-                child: Row(children: [
-                  Text("${appointmentType} appointment",
-                      style: getBoldStyle(
-                          color: ColorManager.white,
-                          fontSize: FontSizeManager.s24)),
-                  const Spacer(),
-                  CircleAvatar(
-                    radius: 28,
-                    backgroundColor:
-                    Theme.of(context).scaffoldBackgroundColor,
-                    child: const CircleAvatar(
-                      radius: 25,
-                      backgroundImage: AssetImage(
-                        ImageAssets.photo,
-                      ),
+          ),
+          body: ConditionalBuilder(
+            condition: cubit.studentModel!=null&&cubit.doctorModelList.isNotEmpty,
+            builder: (context) =>  Column(
+              children: [
+                Container(
+                  height: 110,
+                  decoration: BoxDecoration(
+                    color: ColorManager.primary,
+                    borderRadius: const BorderRadius.only(
+                        bottomLeft: Radius.circular(10),
+                        bottomRight: Radius.circular(10)),
+                  ),
+                  child: Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                          left: 14.0, right: 14, bottom: 15),
+                      child: Row(children: [
+                        Text("${appointmentType} appointment",
+                            style: getBoldStyle(
+                                color: ColorManager.white,
+                                fontSize: FontSizeManager.s24)),
+                        const Spacer(),
+                        CircleAvatar(
+                          radius: 28,
+                          backgroundColor:
+                          Theme.of(context).scaffoldBackgroundColor,
+                          child: CircleAvatar(
+                            radius: 25,
+                            backgroundImage: NetworkImage(cubit.studentModel!.image!),
+                          ),
+                        ),
+                      ]),
                     ),
                   ),
-                ]),
+                ),
+                Expanded(child: IndividualAppListView(context)),
+              ],
+            ),
+            fallback: (context) => Center(
+              child: CircularProgressIndicator(
+                strokeWidth: 3,
+                backgroundColor: ColorManager.primary,
               ),
             ),
           ),
-          Expanded(child: IndividualAppListView()),
-        ],
-      ),
+        );
+      },
     );
   }
-  Widget IndividualAppListView() {
+  Widget IndividualAppListView(context) {
+    var cubit  = StudentCubit.getCubit(context);
     return SingleChildScrollView(
       scrollDirection: Axis.vertical,
       physics: const BouncingScrollPhysics(),
@@ -71,20 +90,21 @@ class IndividualAppointment extends StatelessWidget {
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               itemBuilder: (context, index) {
-                return IndividualItemBuilder(context);
+                return IndividualItemBuilder(context,cubit.doctorModelList[index],index);
               },
               separatorBuilder: (context, index) => const SizedBox(
                 height: 2,
               ),
-              itemCount: 10),
+              itemCount: cubit.doctorModelList.length,
+          ),
         ],
       ),
     );
   }
-  Widget IndividualItemBuilder(context) {
+  Widget IndividualItemBuilder(context,Doctor model , index) {
     return InkWell(
       onTap: () {
-        navigateTo(context, CompleteIndividualAppointment(appointmentType));
+        navigateTo(context, CompleteIndividualAppointment(appointmentType,model.id!));
       },
       child:Padding(
         padding: EdgeInsets.only(
@@ -115,7 +135,7 @@ class IndividualAppointment extends StatelessWidget {
                     Expanded(
                       child: SizedBox(
                         child: Text(
-                          "Dr.Mohamed",
+                          "${model.name}",
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: getSemiBoldStyle(
@@ -130,10 +150,9 @@ class IndividualAppointment extends StatelessWidget {
                           color: Colors.amber,
                         );
                       },
-                      onRatingUpdate: (value) {
-                        //todo change rating double
-                      },
+                      onRatingUpdate: (value) {},
                       itemSize: 20,
+                      initialRating: model.rate!,
                       ignoreGestures: true,
                       allowHalfRating: true,
                       updateOnDrag: true,
@@ -152,7 +171,7 @@ class IndividualAppointment extends StatelessWidget {
                     children: [
                       const Spacer(),
                       Text(
-                        "Booked",
+                        "Book",
                         style: getSemiBoldStyle(
                             color: ColorManager.white,
                             fontSize: FontSizeManager.s14),

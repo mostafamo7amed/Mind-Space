@@ -25,6 +25,7 @@ class LoginView extends StatelessWidget {
           if(state is LoginSuccessState){
             CacheHelper.saveData(key: 'uid', data: state.uid);
             print('state id == ${state.uid}');
+            uid = state.uid;
             LoginCubit.getCubit(context).findUser(state.uid, context);
           }
         },

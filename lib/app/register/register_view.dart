@@ -32,6 +32,7 @@ class _RegisterViewState extends State<RegisterView> {
         listener: (context, state) {
           if(state is RegisterSuccessState){
             CacheHelper.saveData(key: 'uid', data: state.id);
+            uid = state.id;
             String userType  ='';
             userType = isSelected[0]==true? 'Doctor':'Student';
             print('============= user type $userType ================');

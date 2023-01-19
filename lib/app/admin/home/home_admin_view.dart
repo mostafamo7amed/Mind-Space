@@ -20,6 +20,8 @@ class HomeAdminView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var cubit = AdminCubit.getCubit(context);
+    cubit.getUser();
     return BlocConsumer<AdminCubit, AdminStates>(
       listener: (context, state) {},
       builder: (context, state) {

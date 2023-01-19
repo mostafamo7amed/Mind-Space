@@ -106,14 +106,10 @@ class UserManagement extends StatelessWidget {
                               .studentModel
                               .isNotEmpty,
                           builder: (context) => studentListView(context),
-                          fallback: (context) => SizedBox(
-                            height: 25,
-                            width: 25,
-                            child: Center(
-                              child: CircularProgressIndicator(
-                                strokeWidth: 3,
-                                backgroundColor: ColorManager.primary,
-                              ),
+                          fallback: (context) => Center(
+                            child: CircularProgressIndicator(
+                              strokeWidth: 3,
+                              backgroundColor: ColorManager.primary,
                             ),
                           ),
                         ),
@@ -122,14 +118,10 @@ class UserManagement extends StatelessWidget {
                               .doctorModel
                               .isNotEmpty,
                           builder: (context) => doctorListView(context),
-                          fallback: (context) => SizedBox(
-                            height: 25,
-                            width: 25,
-                            child: Center(
-                              child: CircularProgressIndicator(
-                                strokeWidth: 3,
-                                backgroundColor: ColorManager.primary,
-                              ),
+                          fallback: (context) => Center(
+                            child: CircularProgressIndicator(
+                              strokeWidth: 3,
+                              backgroundColor: ColorManager.primary,
                             ),
                           ),
                         ),

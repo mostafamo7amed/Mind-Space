@@ -75,7 +75,7 @@ class ForgetPasswordView extends StatelessWidget {
                             FirebaseAuth.instance.sendPasswordResetEmail(email: emailController.text).then((value) {
                               toast(message: 'Check your mail to reset your password', data: ToastStates.success);
                             }).catchError((e){
-                              toast(message: e.toString(), data: ToastStates.error);
+                              toast(message: e.toString(), data: ToastStates.warning);
                             });
                           }
                         },

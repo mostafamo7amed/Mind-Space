@@ -1,4 +1,8 @@
+import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mind_space/app/doctor/home/home_cubit/cubit.dart';
+import 'package:mind_space/app/doctor/home/home_cubit/states.dart';
 
 import '../../../styles/icons_broken.dart';
 import '../../resources/assets_manager.dart';
@@ -11,66 +15,81 @@ class Appointment extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 2,
-      child: Scaffold(
-        backgroundColor: ColorManager.background,
-        body: Column(
-          children: [
-            Container(
-              height: 100,
-              decoration: BoxDecoration(
-                color: ColorManager.primary,
-                borderRadius: const BorderRadius.only(
-                    bottomLeft: Radius.circular(10),
-                    bottomRight: Radius.circular(10)),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.only(left: 14.0, right: 14),
-                child: Row(children: [
-                  Text("Welcome",
-                      style: getBoldStyle(
-                          color: ColorManager.white,
-                          fontSize: FontSizeManager.s24)),
-                  const Spacer(),
-                  CircleAvatar(
-                    radius: 28,
-                    backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                    child: const CircleAvatar(
-                      radius: 25,
-                      backgroundImage: AssetImage(
-                        ImageAssets.photo,
-                      ),
+    return BlocConsumer<DoctorCubit,DoctorStates>(
+      listener: (context, state) {
+
+      },
+      builder: (context, state) {
+        var cubit = DoctorCubit.getCubit(context);
+        return DefaultTabController(
+          length: 2,
+          child: Scaffold(
+            backgroundColor: ColorManager.background,
+            body: ConditionalBuilder(
+              condition: cubit.doctorModel!=null,
+              builder: (context) =>  Column(
+                children: [
+                  Container(
+                    height: 100,
+                    decoration: BoxDecoration(
+                      color: ColorManager.primary,
+                      borderRadius: const BorderRadius.only(
+                          bottomLeft: Radius.circular(10),
+                          bottomRight: Radius.circular(10)),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 14.0, right: 14),
+                      child: Row(children: [
+                        Text("Welcome",
+                            style: getBoldStyle(
+                                color: ColorManager.white,
+                                fontSize: FontSizeManager.s24)),
+                        const Spacer(),
+                        CircleAvatar(
+                          radius: 28,
+                          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                          child: CircleAvatar(
+                            radius: 25,
+                            backgroundImage: NetworkImage(cubit.doctorModel!.image!),
+                          ),
+                        ),
+                      ]),
                     ),
                   ),
-                ]),
-              ),
-            ),
-            const SizedBox(
-              width: double.infinity,
-              child: TabBar(
-                labelColor: Colors.red,
-                isScrollable: true,
-                unselectedLabelColor: Colors.black,
-                indicatorColor: Colors.red,
-                indicatorPadding: EdgeInsets.all(15),
-                physics: BouncingScrollPhysics(),
-                tabs: [
-                  Tab(text: "Online"),
-                  Tab(text: "At clinic"),
+                  const SizedBox(
+                    width: double.infinity,
+                    child: TabBar(
+                      labelColor: Colors.red,
+                      isScrollable: true,
+                      unselectedLabelColor: Colors.black,
+                      indicatorColor: Colors.red,
+                      indicatorPadding: EdgeInsets.all(15),
+                      physics: BouncingScrollPhysics(),
+                      tabs: [
+                        Tab(text: "Online"),
+                        Tab(text: "At clinic"),
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: TabBarView(
+                          children: [onlineAppListView(), offlineAppListView()]),
+                    ),
+                  ),
                 ],
               ),
-            ),
-            Expanded(
-              child: SizedBox(
-                width: double.infinity,
-                child: TabBarView(
-                    children: [onlineAppListView(), offlineAppListView()]),
+              fallback: (context) => Center(
+                child: CircularProgressIndicator(
+                  strokeWidth: 3,
+                  backgroundColor: ColorManager.primary,
+                ),
               ),
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 
