@@ -35,3 +35,20 @@ class EditGroupSessionErrorState extends DoctorStates{}
 
 class DeleteGroupSessionSuccessState extends DoctorStates{}
 class DeleteGroupSessionErrorState extends DoctorStates{}
+
+class DeleteSessionSuccessState extends DoctorStates{}
+class DeleteSessionErrorState extends DoctorStates{}
+
+class GetOnlineAppointmentLoadingState extends DoctorStates{}
+class GetOnlineAppointmentSuccessState extends DoctorStates{}
+class GetOnlineAppointmentErrorState extends DoctorStates{}
+
+class GetOfflineAppointmentLoadingState extends DoctorStates{}
+class GetOfflineAppointmentSuccessState extends DoctorStates{}
+class GetOfflineAppointmentErrorState extends DoctorStates{}
+
+class ChangeStatusSuccessState extends DoctorStates{}
+class ChangeStatusErrorState extends DoctorStates{}
+
+class AddLinkSuccessState extends DoctorStates{}
+class AddLinkErrorState extends DoctorStates{}

@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mind_space/app/doctor/home/home_cubit/cubit.dart';
 import 'package:mind_space/app/doctor/home/home_cubit/states.dart';
+import 'package:mind_space/app/models/appointment.dart';
+import 'package:mind_space/shared/components/component.dart';
 
 import '../../../styles/icons_broken.dart';
 import '../../resources/assets_manager.dart';
@@ -17,7 +19,11 @@ class Appointment extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocConsumer<DoctorCubit,DoctorStates>(
       listener: (context, state) {
+        if(state is ChangeStatusSuccessState){
+          DoctorCubit.getCubit(context).getAllOfflineAppointment();
+          DoctorCubit.getCubit(context).getAllOnlineAppointment();
 
+        }
       },
       builder: (context, state) {
         var cubit = DoctorCubit.getCubit(context);
@@ -75,7 +81,31 @@ class Appointment extends StatelessWidget {
                     child: SizedBox(
                       width: double.infinity,
                       child: TabBarView(
-                          children: [onlineAppListView(), offlineAppListView()]),
+                          children: [ConditionalBuilder(
+                            condition: cubit.onlineAppointmentList.isNotEmpty,
+                            builder: (context) => onlineAppListView(context),
+                            fallback: (context) => SizedBox(
+                              child: Center(
+                                child: Text(
+                                  'There is no online appointment yet',
+                                  style: getRegularStyle(
+                                      color: ColorManager.gray, fontSize: 16),
+                                ),
+                              ),
+                            ),
+                          ), ConditionalBuilder(
+                            condition: cubit.offlineAppointmentList.isNotEmpty,
+                            builder: (context) => offlineAppListView(context),
+                            fallback: (context) => SizedBox(
+                              child: Center(
+                                child: Text(
+                                  'There is no at clinic appointment yet',
+                                  style: getRegularStyle(
+                                      color: ColorManager.gray, fontSize: 16),
+                                ),
+                              ),
+                            ),
+                          )]),
                     ),
                   ),
                 ],
@@ -93,7 +123,8 @@ class Appointment extends StatelessWidget {
     );
   }
 
-  Widget onlineAppListView() {
+  Widget onlineAppListView(context) {
+    var cubit = DoctorCubit.getCubit(context);
     return SingleChildScrollView(
       scrollDirection: Axis.vertical,
       physics: const BouncingScrollPhysics(),
@@ -103,18 +134,20 @@ class Appointment extends StatelessWidget {
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               itemBuilder: (context, index) {
-                return onlineItemBuilder(context);
+                return onlineItemBuilder(context,cubit.onlineAppointmentList[index],index);
               },
               separatorBuilder: (context, index) => const SizedBox(
                     height: 2,
                   ),
-              itemCount: 10),
+              itemCount: cubit.onlineAppointmentList.length,
+          ),
         ],
       ),
     );
   }
 
-  Widget offlineAppListView() {
+  Widget offlineAppListView(context) {
+    var cubit = DoctorCubit.getCubit(context);
     return SingleChildScrollView(
       scrollDirection: Axis.vertical,
       physics: const BouncingScrollPhysics(),
@@ -124,21 +157,22 @@ class Appointment extends StatelessWidget {
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               itemBuilder: (context, index) {
-                return offlineItemBuilder(context);
+                return offlineItemBuilder(context,cubit.offlineAppointmentList[index],index);
               },
               separatorBuilder: (context, index) => const SizedBox(
                     height: 2,
                   ),
-              itemCount: 10),
+              itemCount: cubit.offlineAppointmentList.length,
+          ),
         ],
       ),
     );
   }
 
-  Widget onlineItemBuilder(context) {
+  Widget onlineItemBuilder(context,AppointmentModel model,index) {
     return InkWell(
       onTap: () {
-        showAppointmentDialog(context);
+        showAppointmentDialog(context,model,index);
       },
       child: Padding(
         padding: const EdgeInsets.only(
@@ -171,7 +205,7 @@ class Appointment extends StatelessWidget {
                       child: SizedBox(
                         width: 100,
                         child: Text(
-                          "22 Jun 2023",
+                          "${model.date}",
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: getSemiBoldStyle(
@@ -204,180 +238,197 @@ class Appointment extends StatelessWidget {
                   ),
                 )
               ],
-            )),
-      ),
-    );
-  }
-
-  Widget offlineItemBuilder(context) {
-    return InkWell(
-      onTap: () {
-        showAppointmentDialog(context);
-      },
-      child: Padding(
-        padding: const EdgeInsets.only(
-          left: 5,
-          right: 5,
-        ),
-        child: Card(
-            clipBehavior: Clip.antiAliasWithSaveLayer,
-            elevation: 5,
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(15.0),
-                      child: SizedBox(
-                        width: 140,
-                        child: Text(
-                          "Individual session",
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: getSemiBoldStyle(
-                              color: ColorManager.darkGray, fontSize: 16),
-                        ),
-                      ),
-                    ),
-                    const Spacer(),
-                    Padding(
-                      padding: const EdgeInsets.all(15.0),
-                      child: SizedBox(
-                        width: 100,
-                        child: Text(
-                          "22 Jun 2023",
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: getSemiBoldStyle(
-                              color: ColorManager.darkGray, fontSize: 16),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 5,
-                    ),
-                  ],
-                ),
-                Container(
-                  color: ColorManager.primary,
-                  width: double.infinity,
-                  child: Row(
-                    children: [
-                      const Spacer(),
-                      Text(
-                        "View",
-                        style: getSemiBoldStyle(
-                            color: ColorManager.white,
-                            fontSize: FontSizeManager.s14),
-                      ),
-                      Icon(
-                        IconBroken.Arrow___Right_2,
-                        color: ColorManager.white,
-                      ),
-                    ],
-                  ),
-                )
-              ],
-            )),
-      ),
-    );
-  }
-
-  Future showAppointmentDialog(context) => showDialog(
-        context: context,
-        builder: (context) {
-          return Dialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
             ),
-            child: Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Row(
+        ),
+      ),
+    );
+  }
+
+  Widget offlineItemBuilder(context,AppointmentModel model,index) {
+    return InkWell(
+      onTap: () {
+        showAppointmentDialog(context,model,index);
+      },
+      child: Padding(
+        padding: const EdgeInsets.only(
+          left: 5,
+          right: 5,
+        ),
+        child: Card(
+            clipBehavior: Clip.antiAliasWithSaveLayer,
+            elevation: 5,
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(15.0),
+                      child: SizedBox(
+                        width: 140,
+                        child: Text(
+                          "Individual session",
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: getSemiBoldStyle(
+                              color: ColorManager.darkGray, fontSize: 16),
+                        ),
+                      ),
+                    ),
+                    const Spacer(),
+                    Padding(
+                      padding: const EdgeInsets.all(15.0),
+                      child: SizedBox(
+                        width: 100,
+                        child: Text(
+                          "${model.date}",
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: getSemiBoldStyle(
+                              color: ColorManager.darkGray, fontSize: 16),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 5,
+                    ),
+                  ],
+                ),
+                Container(
+                  color: ColorManager.primary,
+                  width: double.infinity,
+                  child: Row(
                     children: [
-                      Spacer(),
-                      ImageIcon(AssetImage(ImageAssets.point),
+                      const Spacer(),
+                      Text(
+                        "View",
+                        style: getSemiBoldStyle(
+                            color: ColorManager.white,
+                            fontSize: FontSizeManager.s14),
+                      ),
+                      Icon(
+                        IconBroken.Arrow___Right_2,
+                        color: ColorManager.white,
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            )),
+      ),
+    );
+  }
+
+  Future showAppointmentDialog(context,AppointmentModel model,index){
+    var cubit  = DoctorCubit.getCubit(context);
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  children: [
+                    Spacer(),
+                    ImageIcon(AssetImage(ImageAssets.point),
                       size: 12,
                       color: ColorManager.error,
-                      ),
-                    ],
-                  ),
-                  Text(
-                    "Individual session",
-                    style: getBoldStyle(
-                        color: ColorManager.darkGray, fontSize: 18),
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Text(
-                    "22 Jun 2023",
-                    style: getSemiBoldStyle(
-                        color: ColorManager.darkGray, fontSize: 14),
-                  ),
-                  SizedBox(
-                    height: 5,
-                  ),
-                  Text(
-                    "9:00 AM",
-                    style: getSemiBoldStyle(
-                        color: ColorManager.darkGray, fontSize: 14),
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      TextButton(
-                        style: ButtonStyle(
-                            shape: MaterialStatePropertyAll(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(50),
-                              ),
+                    ),
+                  ],
+                ),
+                Text(
+                  "Individual session",
+                  style: getBoldStyle(
+                      color: ColorManager.darkGray, fontSize: 18),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  "${model.date}",
+                  style: getSemiBoldStyle(
+                      color: ColorManager.darkGray, fontSize: 14),
+                ),
+                SizedBox(
+                  height: 5,
+                ),
+                Text(
+                  "${model.time}",
+                  style: getSemiBoldStyle(
+                      color: ColorManager.darkGray, fontSize: 14),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    TextButton(
+                      style: ButtonStyle(
+                          shape: MaterialStatePropertyAll(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(50),
                             ),
-                            backgroundColor:
-                                MaterialStatePropertyAll(Colors.green)),
-                        onPressed: () {
-                          //ToDo view user
-                        },
-                        child: Text(
-                          "Accept",
-                          style: getRegularStyle(color: ColorManager.white),
-                        ),
+                          ),
+                          backgroundColor:
+                          MaterialStatePropertyAll(Colors.green)),
+                      onPressed: () {
+                        if(model.status== 'Processing'){
+                          cubit.changeAppointmentStatus(model.type!, index, 'Accepted');
+                          Navigator.pop(context);
+                          toast(message: 'Appointment Accepted successfully', data: ToastStates.success);
+                        }
+                      },
+                      child: Text(
+                        "Accept",
+                        style: getRegularStyle(color: ColorManager.white),
                       ),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      TextButton(
-                        style: ButtonStyle(
-                            shape: MaterialStatePropertyAll(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(50),
-                              ),
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    TextButton(
+                      style: ButtonStyle(
+                          shape: MaterialStatePropertyAll(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(50),
                             ),
-                            backgroundColor:
-                                MaterialStatePropertyAll(Colors.red)),
-                        onPressed: () {
-                          //ToDo block user
-                        },
-                        child: Text(
-                          "Reject",
-                          style: getRegularStyle(color: ColorManager.white),
-                        ),
+                          ),
+                          backgroundColor:
+                          MaterialStatePropertyAll(Colors.red)),
+                      onPressed: () {
+                        if(model.status == 'Processing'){
+                          cubit.changeAppointmentStatus(model.type!, index, 'Rejected');
+                          Navigator.pop(context);
+                          toast(message: 'Appointment Rejected successfully', data: ToastStates.success);
+                        }
+                      },
+                      child: model.status=='Rejected'?
+                      Text(
+                        "Rejected",
+                        style: getRegularStyle(color: ColorManager.white),
+                      ):
+                      Text(
+                        "Reject",
+                        style: getRegularStyle(color: ColorManager.white),
                       ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                ],
-              ),
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+              ],
             ),
-          );
-        },
-      );
+          ),
+        );
+      },
+    );
+  }
 }

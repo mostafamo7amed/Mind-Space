@@ -54,7 +54,7 @@ class StudentCubit extends Cubit<StudentStates> {
     emit(MakeAppointmentLoadingState());
     String appointmentId = await generateRandomString(25);
     AppointmentModel appointmentModel = AppointmentModel(
-        appointmentId, studentModel!.id, accountType, date, time, '', type, doctorId,studentNickname);
+        appointmentId, studentModel!.id, accountType, date, time, '', type, doctorId,studentNickname,'Processing');
     FirebaseFirestore.instance
         .collection('Individual Session')
         .doc(appointmentId)

@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mind_space/app/doctor/home/home_cubit/states.dart';
+import 'package:mind_space/app/models/appointment.dart';
 import 'package:mind_space/shared/components/component.dart';
 import '../../../models/doctor.dart';
 import '../../../models/group_session.dart';
@@ -194,13 +195,26 @@ class DoctorCubit extends Cubit<DoctorStates> {
         .doc(groupSessionList[index].groupId)
         .delete()
         .then((value) {
-          toast(message: 'Group deleted successfully', data: ToastStates.success);
+          toast(message: 'Session deleted successfully', data: ToastStates.success);
       emit(DeleteGroupSessionSuccessState());
     }).catchError((e) {
       emit(DeleteGroupSessionErrorState());
     });
   }
 
+  DeleteAppointmentSession({
+    required int index,
+  }) {
+    FirebaseFirestore.instance.collection('Individual Session')
+        .doc(acceptedAppointmentList[index].appointmentId)
+        .delete()
+        .then((value) {
+      toast(message: 'Session deleted successfully', data: ToastStates.success);
+      emit(DeleteSessionSuccessState());
+    }).catchError((e) {
+      emit(DeleteSessionErrorState());
+    });
+  }
   List<GroupSessionModel> groupSessionList = [];
   void getGroupSession() {
     groupSessionList = [];
@@ -218,6 +232,125 @@ class DoctorCubit extends Cubit<DoctorStates> {
       emit(GetGroupSessionErrorState());
     });
   }
+
+
+  List<AppointmentModel> onlineAppointmentList = [];
+  List<AppointmentModel> offlineAppointmentList = [];
+  List<AppointmentModel> acceptedAppointmentList = [];
+  void getAllOnlineAppointment() {
+    onlineAppointmentList = [];
+    acceptedAppointmentList = [];
+    emit(GetOfflineAppointmentLoadingState());
+    FirebaseFirestore.instance
+        .collection('Individual Session')
+        .where('doctorId', isEqualTo: doctorModel!.id)
+        .where('type',isEqualTo: 'Online')
+        .get()
+        .then((value) {
+      for (var element in value.docs) {
+        if(AppointmentModel.fromMap(element.data()).status=='Accepted'){
+          acceptedAppointmentList.add(AppointmentModel.fromMap(element.data()));
+        }else{
+          onlineAppointmentList.add(AppointmentModel.fromMap(element.data()));
+        }
+      }
+      emit(GetOfflineAppointmentSuccessState());
+    }).catchError((e) {
+      emit(GetOfflineAppointmentErrorState());
+    });
+  }
+  void getAllOfflineAppointment() {
+    offlineAppointmentList = [];
+    acceptedAppointmentList = [];
+    emit(GetOnlineAppointmentLoadingState());
+    FirebaseFirestore.instance
+        .collection('Individual Session')
+        .where('doctorId', isEqualTo: doctorModel!.id)
+        .where('type',isEqualTo: 'At clinic')
+        .get()
+        .then((value) {
+      for (var element in value.docs) {
+        if(AppointmentModel.fromMap(element.data()).status=='Accepted'){
+          acceptedAppointmentList.add(AppointmentModel.fromMap(element.data()));
+        }else{
+          offlineAppointmentList.add(AppointmentModel.fromMap(element.data()));
+        }
+      }
+      emit(GetOnlineAppointmentSuccessState());
+    }).catchError((e) {
+      emit(GetOnlineAppointmentErrorState());
+    });
+  }
+
+  void changeAppointmentStatus(String appointmentType,index,String status){
+    if(appointmentType == 'Online'){
+      AppointmentModel appointmentModel = AppointmentModel(
+          onlineAppointmentList[index].appointmentId,
+          onlineAppointmentList[index].studentId,
+          onlineAppointmentList[index].accountType,
+          onlineAppointmentList[index].date,
+          onlineAppointmentList[index].time,
+          onlineAppointmentList[index].link,
+          onlineAppointmentList[index].type,
+          onlineAppointmentList[index].doctorId,
+          onlineAppointmentList[index].studentNickname,
+          status);
+      FirebaseFirestore.instance
+          .collection('Individual Session')
+          .doc(onlineAppointmentList[index].appointmentId)
+          .update(appointmentModel.toMap()!)
+          .then((value) {
+        emit(ChangeStatusSuccessState());
+      }).catchError((e) {
+        emit(ChangeStatusErrorState());
+      });
+    }else{
+      AppointmentModel appointmentModel = AppointmentModel(
+          offlineAppointmentList[index].appointmentId,
+          offlineAppointmentList[index].studentId,
+          offlineAppointmentList[index].accountType,
+          offlineAppointmentList[index].date,
+          offlineAppointmentList[index].time,
+          offlineAppointmentList[index].link,
+          offlineAppointmentList[index].type,
+          offlineAppointmentList[index].doctorId,
+          offlineAppointmentList[index].studentNickname,
+          status);
+      FirebaseFirestore.instance
+          .collection('Individual Session')
+          .doc(offlineAppointmentList[index].appointmentId)
+          .update(appointmentModel.toMap()!)
+          .then((value) {
+        emit(ChangeStatusSuccessState());
+      }).catchError((e) {
+        emit(ChangeStatusErrorState());
+      });
+    }
+  }
+
+  void addAppointmentLink(index,String link){
+      AppointmentModel appointmentModel = AppointmentModel(
+          acceptedAppointmentList[index].appointmentId,
+          acceptedAppointmentList[index].studentId,
+          acceptedAppointmentList[index].accountType,
+          acceptedAppointmentList[index].date,
+          acceptedAppointmentList[index].time,
+          link,
+          acceptedAppointmentList[index].type,
+          acceptedAppointmentList[index].doctorId,
+          acceptedAppointmentList[index].studentNickname,
+          acceptedAppointmentList[index].status);
+      FirebaseFirestore.instance
+          .collection('Individual Session')
+          .doc(acceptedAppointmentList[index].appointmentId)
+          .update(appointmentModel.toMap()!)
+          .then((value) {
+        emit(AddLinkSuccessState());
+      }).catchError((e) {
+        emit(AddLinkErrorState());
+      });
+  }
+
 
   String generateRandomString(int len) {
     var r = Random();

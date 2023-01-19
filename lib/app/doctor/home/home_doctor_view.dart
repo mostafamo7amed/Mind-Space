@@ -18,7 +18,12 @@ class HomeDoctorView extends StatelessWidget {
     var cubit =DoctorCubit.getCubit(context);
     cubit.getDoctor(CacheHelper.getData(key: 'uid'));
     return BlocConsumer<DoctorCubit, DoctorStates>(
-      listener: (context, state) {},
+      listener: (context, state) {
+        if(state is GetDoctorSuccessState){
+          cubit.getAllOnlineAppointment();
+          cubit.getAllOfflineAppointment();
+        }
+      },
       builder: (context, state) {
         var cubit = DoctorCubit.getCubit(context);
         return Scaffold(

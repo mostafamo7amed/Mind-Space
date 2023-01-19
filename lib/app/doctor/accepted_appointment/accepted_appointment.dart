@@ -1,4 +1,11 @@
+import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_linkify/flutter_linkify.dart';
+import 'package:mind_space/app/doctor/home/home_cubit/cubit.dart';
+import 'package:mind_space/app/doctor/home/home_cubit/states.dart';
+import 'package:mind_space/app/models/appointment.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../styles/icons_broken.dart';
 import '../../resources/assets_manager.dart';
@@ -7,16 +14,41 @@ import '../../resources/font_manager.dart';
 import '../../resources/styles_manager.dart';
 
 class AcceptedAppointment extends StatelessWidget {
-  const AcceptedAppointment({Key? key}) : super(key: key);
-
+  AcceptedAppointment({Key? key}) : super(key: key);
+  var formKey = GlobalKey<FormState>();
+  var linkController = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: ColorManager.background,
-      body: acceptedAppListView(),
+    return BlocConsumer<DoctorCubit,DoctorStates>(
+      listener: (context, state) {
+        if(state is AddLinkSuccessState || state is DeleteSessionSuccessState){
+          DoctorCubit.getCubit(context).getAllOfflineAppointment();
+          DoctorCubit.getCubit(context).getAllOnlineAppointment();
+        }
+      },
+      builder: (context, state) {
+        var cubit =DoctorCubit.getCubit(context);
+        return Scaffold(
+          backgroundColor: ColorManager.background,
+          body: ConditionalBuilder(
+            condition: cubit.acceptedAppointmentList.isNotEmpty,
+            builder: (context) => acceptedAppListView(context),
+            fallback: (context) => SizedBox(
+              child: Center(
+                child: Text(
+                  'There is no accepted appointment',
+                  style: getRegularStyle(
+                      color: ColorManager.gray, fontSize: 18),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
-  Widget acceptedAppListView() {
+  Widget acceptedAppListView(context) {
+    var cubit =DoctorCubit.getCubit(context);
     return SingleChildScrollView(
       scrollDirection: Axis.vertical,
       physics: const BouncingScrollPhysics(),
@@ -26,17 +58,18 @@ class AcceptedAppointment extends StatelessWidget {
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               itemBuilder: (context, index) {
-                return acceptedAppItemBuilder(context);
+                return acceptedAppItemBuilder(context,cubit.acceptedAppointmentList[index],index);
               },
               separatorBuilder: (context, index) => const SizedBox(
                 height: 2,
               ),
-              itemCount: 10),
+              itemCount: cubit.acceptedAppointmentList.length,
+          ),
         ],
       ),
     );
   }
-  Widget acceptedAppItemBuilder(context) {
+  Widget acceptedAppItemBuilder(context,AppointmentModel model ,index) {
     return Padding(
       padding: const EdgeInsets.only(
         left: 5,
@@ -44,7 +77,7 @@ class AcceptedAppointment extends StatelessWidget {
       ),
       child: InkWell(
         onTap: (){
-          showAppointmentDialog(context);
+          showAppointmentDialog(context,model,index);
         },
         child: Card(
             clipBehavior: Clip.antiAliasWithSaveLayer,
@@ -72,7 +105,7 @@ class AcceptedAppointment extends StatelessWidget {
                       child: SizedBox(
                         width: 100,
                         child: Text(
-                          "22 Jun 2023",
+                          "${model.date}",
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: getSemiBoldStyle(
@@ -86,10 +119,11 @@ class AcceptedAppointment extends StatelessWidget {
                   ],
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(left: 15.0,right: 15),                child: Align(
+                  padding: const EdgeInsets.only(left: 15.0,right: 15),
+                  child: Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      "Online",
+                      "${model.type}",
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: getSemiBoldStyle(
@@ -97,6 +131,33 @@ class AcceptedAppointment extends StatelessWidget {
                     ),
                   ),
                 ),
+                const SizedBox(height: 5,),
+                if(model.link!='')
+                  SizedBox(
+                    width: double.infinity,
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                        left: 15.0, right: 15.0,),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Link ",
+                            style: getSemiBoldStyle(
+                                color: ColorManager.darkGray, fontSize: 16),
+                          ),
+                          Expanded(
+                            child: Linkify(
+                              onOpen: _onOpen,
+                              style: getSemiBoldStyle(
+                                  color: ColorManager.blue, fontSize: 14),
+                              text: "${model.link}",
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 const SizedBox(height: 5,),
                 Container(
                   color: ColorManager.primary,
@@ -120,7 +181,7 @@ class AcceptedAppointment extends StatelessWidget {
     );
   }
 
-  Future showAppointmentDialog(context) => showDialog(
+  Future showAppointmentDialog(context,AppointmentModel model ,index) => showDialog(
     context: context,
     builder: (context) {
       return Dialog(
@@ -151,7 +212,7 @@ class AcceptedAppointment extends StatelessWidget {
                 height: 10,
               ),
               Text(
-                "22 Jun 2023",
+                "${model.date}",
                 style: getSemiBoldStyle(
                     color: ColorManager.darkGray, fontSize: 14),
               ),
@@ -159,7 +220,7 @@ class AcceptedAppointment extends StatelessWidget {
                 height: 5,
               ),
               Text(
-                "Online",
+                "${model.type}",
                 style: getSemiBoldStyle(
                     color: ColorManager.darkGray, fontSize: 14),
               ),
@@ -167,10 +228,39 @@ class AcceptedAppointment extends StatelessWidget {
                 height: 5,
               ),
               Text(
-                "9:00 AM",
+                "${model.time}",
                 style: getSemiBoldStyle(
                     color: ColorManager.darkGray, fontSize: 14),
               ),
+              SizedBox(
+                height: 5,
+              ),
+              if(model.link!='')
+                SizedBox(
+                  width: double.infinity,
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                        left: 10.0, right: 10.0,),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Link : ",
+                          style: getSemiBoldStyle(
+                              color: ColorManager.darkGray, fontSize: 16),
+                        ),
+                        Expanded(
+                          child: Linkify(
+                            onOpen: _onOpen,
+                            style: getSemiBoldStyle(
+                                color: ColorManager.blue, fontSize: 14),
+                            text: "${model.link}",
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               SizedBox(
                 height: 10,
               ),
@@ -187,10 +277,10 @@ class AcceptedAppointment extends StatelessWidget {
                         backgroundColor:
                         MaterialStatePropertyAll(Colors.green)),
                     onPressed: () {
-                      //ToDo view user
+                      showFinishAppointmentDialog(model,context,index);
                     },
                     child: Text(
-                      "Join",
+                      "Finish",
                       style: getRegularStyle(color: ColorManager.white),
                     ),
                   ),
@@ -207,7 +297,7 @@ class AcceptedAppointment extends StatelessWidget {
                         backgroundColor:
                         MaterialStatePropertyAll(Colors.red)),
                     onPressed: () {
-                      //ToDo block user
+                      showCancelAppointmentDialog(model,context,index);
                     },
                     child: Text(
                       "Cancel",
@@ -217,6 +307,7 @@ class AcceptedAppointment extends StatelessWidget {
                   const SizedBox(
                     width: 10,
                   ),
+                  if(model.type == 'Online')
                   TextButton(
                     style: ButtonStyle(
                         shape: MaterialStatePropertyAll(
@@ -227,7 +318,7 @@ class AcceptedAppointment extends StatelessWidget {
                         backgroundColor:
                         MaterialStatePropertyAll(Colors.blue)),
                     onPressed: () {
-                      //ToDo block user
+                      showEditAppointmentDialog(model,context,index);
                     },
                     child: Text(
                       "Edit",
@@ -245,4 +336,337 @@ class AcceptedAppointment extends StatelessWidget {
       );
     },
   );
+
+
+  Future showEditAppointmentDialog(AppointmentModel model, context, index) {
+    var cubit  = DoctorCubit.getCubit(context);
+    linkController.text = cubit.acceptedAppointmentList[index].link!;
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return BlocConsumer<DoctorCubit,DoctorStates>(
+          listener: (context, state) {},
+          builder: (context, state) => Dialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: SingleChildScrollView(
+                physics: BouncingScrollPhysics(),
+                child: Form(
+                  key: formKey,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Row(
+                        children: [
+                          Spacer(),
+                          ImageIcon(
+                            AssetImage(ImageAssets.point),
+                            size: 12,
+                            color: ColorManager.error,
+                          ),
+                        ],
+                      ),
+                      Text(
+                        "Edit Appointment Information",
+                        style: getBoldStyle(
+                            color: ColorManager.darkGray, fontSize: 18),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TextFormField(
+                              controller: linkController,
+                              maxLines: null,
+                              style: getRegularStyle(
+                                  color: ColorManager.black, fontSize: 16),
+                              decoration: const InputDecoration(
+                                contentPadding: EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 5),
+                                hintText: 'Enter appointment link',
+                                border: OutlineInputBorder(
+                                  borderRadius:
+                                  BorderRadius.all(Radius.circular(10.0)),
+                                ),
+                              ),
+                              validator: (value) {
+                                if (value!.isEmpty) {
+                                  return 'Please enter link for session';
+                                }
+                                return null;
+                              },
+                              keyboardType: TextInputType.text,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          TextButton(
+                            style: ButtonStyle(
+                                shape: MaterialStatePropertyAll(
+                                  RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(50),
+                                  ),
+                                ),
+                                backgroundColor:
+                                MaterialStatePropertyAll(Colors.green)),
+                            onPressed: () {
+                              if (formKey.currentState!.validate()) {
+                                DoctorCubit.getCubit(context)
+                                    .addAppointmentLink(index, linkController.text);
+                                Navigator.pop(context);
+                                Navigator.pop(context);
+                              }
+                            },
+                            child: Text(
+                              "Save",
+                              style: getRegularStyle(color: ColorManager.white),
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          TextButton(
+                            style: ButtonStyle(
+                                shape: MaterialStatePropertyAll(
+                                  RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(50),
+                                  ),
+                                ),
+                                backgroundColor:
+                                MaterialStatePropertyAll(Colors.blue)),
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: Text(
+                              "Cancel",
+                              style: getRegularStyle(color: ColorManager.white),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },);
+  }
+
+  Future showCancelAppointmentDialog(AppointmentModel model, context, index) =>
+      showDialog(
+        context: context,
+        builder: (context) {
+          return Dialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: SingleChildScrollView(
+                physics: BouncingScrollPhysics(),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Row(
+                      children: [
+                        Spacer(),
+                        ImageIcon(
+                          AssetImage(ImageAssets.point),
+                          size: 12,
+                          color: ColorManager.error,
+                        ),
+                      ],
+                    ),
+                    Text(
+                      "Appointment session",
+                      style: getBoldStyle(
+                          color: ColorManager.darkGray, fontSize: 18),
+                    ),
+                    SizedBox(height: 10,),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          child: Text('Do you want to Cancel this Session?',
+                            style: getRegularStyle(color: ColorManager.black,fontSize: 15),),
+                        )
+                      ],
+                    ),
+                    SizedBox(height: 10,),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        TextButton(
+                          style: ButtonStyle(
+                              shape: MaterialStatePropertyAll(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(50),
+                                ),
+                              ),
+                              backgroundColor:
+                              MaterialStatePropertyAll(Colors.red)),
+                          onPressed: () {
+                            DoctorCubit.getCubit(context).DeleteAppointmentSession(index: index);
+                            Navigator.pop(context);
+                          },
+                          child: Text(
+                            "Delete",
+                            style: getRegularStyle(color: ColorManager.white),
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        TextButton(
+                          style: ButtonStyle(
+                              shape: MaterialStatePropertyAll(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(50),
+                                ),
+                              ),
+                              backgroundColor:
+                              MaterialStatePropertyAll(Colors.blue)),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: Text(
+                            "Cancel",
+                            style: getRegularStyle(color: ColorManager.white),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+      );
+  Future showFinishAppointmentDialog(AppointmentModel model, context, index) =>
+      showDialog(
+        context: context,
+        builder: (context) {
+          return Dialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: SingleChildScrollView(
+                physics: BouncingScrollPhysics(),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Row(
+                      children: [
+                        Spacer(),
+                        ImageIcon(
+                          AssetImage(ImageAssets.point),
+                          size: 12,
+                          color: ColorManager.error,
+                        ),
+                      ],
+                    ),
+                    Text(
+                      "Appointment session",
+                      style: getBoldStyle(
+                          color: ColorManager.darkGray, fontSize: 18),
+                    ),
+                    SizedBox(height: 10,),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          child: Text('Do you want to confirm finishing\n this Session?',
+                            style: getRegularStyle(color: ColorManager.black,fontSize: 15),),
+                        )
+                      ],
+                    ),
+                    SizedBox(height: 10,),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        TextButton(
+                          style: ButtonStyle(
+                              shape: MaterialStatePropertyAll(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(50),
+                                ),
+                              ),
+                              backgroundColor:
+                              MaterialStatePropertyAll(Colors.red)),
+                          onPressed: () {
+                            DoctorCubit.getCubit(context).changeAppointmentStatus(model.type!, index, 'Finished');
+                            Navigator.pop(context);
+                          },
+                          child: Text(
+                            "Delete",
+                            style: getRegularStyle(color: ColorManager.white),
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        TextButton(
+                          style: ButtonStyle(
+                              shape: MaterialStatePropertyAll(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(50),
+                                ),
+                              ),
+                              backgroundColor:
+                              MaterialStatePropertyAll(Colors.blue)),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: Text(
+                            "Cancel",
+                            style: getRegularStyle(color: ColorManager.white),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+      );
+
+  Future<void> _onOpen(LinkableElement link) async {
+    if (await canLaunch(link.url)) {
+      await launch(link.url);
+    } else {
+      throw 'Could not launch $link';
+    }
+  }
+
+
+
+
 }
