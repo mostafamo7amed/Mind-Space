@@ -1,85 +1,120 @@
+import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
+import 'package:mind_space/app/models/group_session.dart';
+import 'package:mind_space/app/student/home/home_student_cubit/cubit.dart';
+import 'package:mind_space/shared/components/component.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../styles/icons_broken.dart';
 import '../../../resources/assets_manager.dart';
 import '../../../resources/color_manager.dart';
 import '../../../resources/font_manager.dart';
 import '../../../resources/styles_manager.dart';
+import '../../home/home_student_cubit/states.dart';
 
 class GroupAppointment extends StatelessWidget {
    GroupAppointment({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 2,
-      child: Scaffold(
-        appBar: AppBar(title: Text('Group session'),),
-        body: Column(children: [
-          Container(
-            height: 100,
-            decoration: BoxDecoration(
-              color: ColorManager.primary,
-              borderRadius: const BorderRadius.only(
-                  bottomLeft: Radius.circular(10),
-                  bottomRight: Radius.circular(10)),
-            ),
-            child: Align(
-              alignment: Alignment.bottomCenter,
-              child: Padding(
-                padding: const EdgeInsets.only(
-                    left: 14.0, right: 14, bottom: 15),
-                child: Row(children: [
-                  Text("Group Session",
-                      style: getBoldStyle(
-                          color: ColorManager.white,
-                          fontSize: FontSizeManager.s24)),
-                  const Spacer(),
-                  CircleAvatar(
-                    radius: 28,
-                    backgroundColor:
-                    Theme.of(context).scaffoldBackgroundColor,
-                    child: const CircleAvatar(
-                      radius: 25,
-                      backgroundImage: AssetImage(
-                        ImageAssets.photo,
+    return BlocConsumer<StudentCubit,StudentStates>(
+      listener: (context, state) {
+        if(state is BookGroupSessionSuccessState || state is UnBookGroupSessionSuccessState){
+          StudentCubit.getCubit(context).GetAllGroupSession();
+        }
+      },
+      builder: (context, state) {
+        var cubit = StudentCubit.getCubit(context);
+        return DefaultTabController(
+          length: 2,
+          child: Scaffold(
+            appBar: AppBar(title: Text('Group session'),),
+            body: Column(children: [
+              Container(
+                height: 100,
+                decoration: BoxDecoration(
+                  color: ColorManager.primary,
+                  borderRadius: const BorderRadius.only(
+                      bottomLeft: Radius.circular(10),
+                      bottomRight: Radius.circular(10)),
+                ),
+                child: Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                        left: 14.0, right: 14, bottom: 15),
+                    child: Row(children: [
+                      Text("Group Session",
+                          style: getBoldStyle(
+                              color: ColorManager.white,
+                              fontSize: FontSizeManager.s24)),
+                      const Spacer(),
+                      CircleAvatar(
+                        radius: 28,
+                        backgroundColor:
+                        Theme.of(context).scaffoldBackgroundColor,
+                        child:  CircleAvatar(
+                          radius: 25,
+                          backgroundImage: NetworkImage(
+                              cubit.studentModel!.image!),
+                        ),
+                      ),
+                    ]),
+                  ),
+                ),
+              ),
+              const SizedBox(
+                width: double.infinity,
+                child: TabBar(
+                  labelColor: Colors.red,
+                  isScrollable: true,
+                  unselectedLabelColor: Colors.black,
+                  indicatorColor: Colors.red,
+                  indicatorPadding: EdgeInsets.all(15),
+                  physics: BouncingScrollPhysics(),
+                  tabs: [
+                    Tab(text: "All sessions"),
+                    Tab(text: "Booked sessions"),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: SizedBox(
+                  width: double.infinity,
+                  child: TabBarView(children: [
+                    ConditionalBuilder(
+                      condition:cubit.allGroupSessionList.isNotEmpty,
+                      builder: (context) => groupSessionListView(context),
+                      fallback: (context) => Center(
+                        child: CircularProgressIndicator(
+                          strokeWidth: 3,
+                          backgroundColor: ColorManager.primary,
+                        ),
                       ),
                     ),
-                  ),
-                ]),
+                    ConditionalBuilder(
+                      condition:cubit.allGroupSessionBookingList.isNotEmpty,
+                      builder: (context) => bookedGroupSessionListView(context),
+                      fallback: (context) => Center(
+                        child: Text(
+                          'There is no booked appointment',
+                          style: getRegularStyle(
+                              color: ColorManager.gray, fontSize: 18),
+                        ),
+                      ),
+                    ),
+                  ]),
+                ),
               ),
-            ),
+            ],),
           ),
-          const SizedBox(
-            width: double.infinity,
-            child: TabBar(
-              labelColor: Colors.red,
-              isScrollable: true,
-              unselectedLabelColor: Colors.black,
-              indicatorColor: Colors.red,
-              indicatorPadding: EdgeInsets.all(15),
-              physics: BouncingScrollPhysics(),
-              tabs: [
-                Tab(text: "All sessions"),
-                Tab(text: "Booked sessions"),
-              ],
-            ),
-          ),
-          Expanded(
-            child: SizedBox(
-              width: double.infinity,
-              child: TabBarView(children: [
-                groupSessionListView(),
-                bookedGroupSessionListView(),
-              ]),
-            ),
-          ),
-        ],),
-      ),
+        );
+      },
     );
   }
-  Widget groupSessionListView() {
+  Widget groupSessionListView(context) {
+    var cubit = StudentCubit.getCubit(context);
     return SingleChildScrollView(
       scrollDirection: Axis.vertical,
       physics: const BouncingScrollPhysics(),
@@ -89,18 +124,18 @@ class GroupAppointment extends StatelessWidget {
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               itemBuilder: (context, index) {
-                return groupSessionItemBuilder(context);
+                return groupSessionItemBuilder(cubit.allGroupSessionList[index] ,context,index);
               },
               separatorBuilder: (context, index) => const SizedBox(
                 height: 2,
               ),
-              itemCount: 10),
+              itemCount: cubit.allGroupSessionList.length),
         ],
       ),
     );
   }
 
-  Widget groupSessionItemBuilder(context,) {
+  Widget groupSessionItemBuilder(GroupSessionModel model,context,index) {
     return Padding(
       padding: const EdgeInsets.only(
         left: 5,
@@ -108,7 +143,7 @@ class GroupAppointment extends StatelessWidget {
       ),
       child: InkWell(
         onTap: () {
-          showGroupSessionDialog(context);
+          showGroupSessionDialog(model,context,index);
         },
         child: Card(
             clipBehavior: Clip.antiAliasWithSaveLayer,
@@ -136,7 +171,7 @@ class GroupAppointment extends StatelessWidget {
                       child: SizedBox(
                         width: 100,
                         child: Text(
-                          "22 Jun 2023",
+                          "${model.date}",
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: getSemiBoldStyle(
@@ -149,12 +184,213 @@ class GroupAppointment extends StatelessWidget {
                     ),
                   ],
                 ),
+                Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 15.0, bottom: 10),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          "Title ",
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: getSemiBoldStyle(
+                              color: ColorManager.gray, fontSize: 16),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          left: 15.0, right: 15, bottom: 10),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          "${model.title}",
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: getSemiBoldStyle(
+                              color: ColorManager.darkGray, fontSize: 16),
+                        ),
+                      ),
+                    ),
+                    const Spacer(),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          left: 15.0, right: 15, bottom: 10),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          "Online",
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: getSemiBoldStyle(
+                              color: ColorManager.darkGray, fontSize: 16),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 5,
+                    ),
+                  ],
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+                Container(
+                  color: ColorManager.primary,
+                  width: double.infinity,
+                  child: Row(
+                    children: [
+                      const Spacer(),
+                      Text(
+                        "View",
+                        style: getSemiBoldStyle(
+                            color: ColorManager.white,
+                            fontSize: FontSizeManager.s14),
+                      ),
+                      Icon(
+                        IconBroken.Arrow___Right_2,
+                        color: ColorManager.white,
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            )),
+      ),
+    );
+  }
+
+
+  Widget bookedGroupSessionListView(context) {
+    var cubit = StudentCubit.getCubit(context);
+    return SingleChildScrollView(
+      scrollDirection: Axis.vertical,
+      physics: const BouncingScrollPhysics(),
+      child: Column(
+        children: [
+          ListView.separated(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemBuilder: (context, index) {
+                return bookedGroupSessionItemBuilder(cubit.allGroupSessionBookingList[index],context,index);
+              },
+              separatorBuilder: (context, index) => const SizedBox(
+                height: 2,
+              ),
+              itemCount: cubit.allGroupSessionBookingList.length),
+        ],
+      ),
+    );
+  }
+
+  Widget bookedGroupSessionItemBuilder(GroupSessionModel model,context,index) {
+    return Padding(
+      padding: const EdgeInsets.only(
+        left: 5,
+        right: 5,
+      ),
+      child: InkWell(
+        onTap: () {
+          showBookedGroupSessionDialog(model,context,index);
+        },
+        child: Card(
+            clipBehavior: Clip.antiAliasWithSaveLayer,
+            elevation: 5,
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 15.0, right: 15),
+                      child: SizedBox(
+                        width: 140,
+                        child: Text(
+                          "Group session",
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: getSemiBoldStyle(
+                              color: ColorManager.darkGray, fontSize: 16),
+                        ),
+                      ),
+                    ),
+                    const Spacer(),
+                    Padding(
+                      padding: const EdgeInsets.all(15.0),
+                      child: SizedBox(
+                        width: 100,
+                        child: Text(
+                          "${model.date}",
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: getSemiBoldStyle(
+                              color: ColorManager.darkGray, fontSize: 16),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 5,
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 15.0, bottom: 10),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          "Title ",
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: getSemiBoldStyle(
+                              color: ColorManager.gray, fontSize: 16),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          left: 15.0, right: 15, bottom: 10),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          "${model.title}",
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: getSemiBoldStyle(
+                              color: ColorManager.darkGray, fontSize: 16),
+                        ),
+                      ),
+                    ),
+                    const Spacer(),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          left: 15.0, right: 15, bottom: 10),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          "Online",
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: getSemiBoldStyle(
+                              color: ColorManager.darkGray, fontSize: 16),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 5,
+                    ),
+                  ],
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
                 Padding(
                   padding: const EdgeInsets.only(left: 15.0, right: 15),
                   child: Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      "Online",
+                      "${model.status}",
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: getSemiBoldStyle(
@@ -191,119 +427,7 @@ class GroupAppointment extends StatelessWidget {
   }
 
 
-  Widget bookedGroupSessionListView() {
-    return SingleChildScrollView(
-      scrollDirection: Axis.vertical,
-      physics: const BouncingScrollPhysics(),
-      child: Column(
-        children: [
-          ListView.separated(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemBuilder: (context, index) {
-                return bookedGroupSessionItemBuilder(context);
-              },
-              separatorBuilder: (context, index) => const SizedBox(
-                height: 2,
-              ),
-              itemCount: 2),
-        ],
-      ),
-    );
-  }
-
-  Widget bookedGroupSessionItemBuilder(context,) {
-    return Padding(
-      padding: const EdgeInsets.only(
-        left: 5,
-        right: 5,
-      ),
-      child: InkWell(
-        onTap: () {
-          showBookedGroupSessionDialog(context);
-        },
-        child: Card(
-            clipBehavior: Clip.antiAliasWithSaveLayer,
-            elevation: 5,
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(left: 15.0, right: 15),
-                      child: SizedBox(
-                        width: 140,
-                        child: Text(
-                          "Group session",
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: getSemiBoldStyle(
-                              color: ColorManager.darkGray, fontSize: 16),
-                        ),
-                      ),
-                    ),
-                    const Spacer(),
-                    Padding(
-                      padding: const EdgeInsets.all(15.0),
-                      child: SizedBox(
-                        width: 100,
-                        child: Text(
-                          "22 Jun 2023",
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: getSemiBoldStyle(
-                              color: ColorManager.darkGray, fontSize: 16),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 5,
-                    ),
-                  ],
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 15.0, right: 15),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      "Opened",
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: getSemiBoldStyle(
-                          color: ColorManager.darkGray, fontSize: 16),
-                    ),
-                  ),
-                ),
-                const SizedBox(
-                  height: 5,
-                ),
-                Container(
-                  color: ColorManager.primary,
-                  width: double.infinity,
-                  child: Row(
-                    children: [
-                      const Spacer(),
-                      Text(
-                        "View",
-                        style: getSemiBoldStyle(
-                            color: ColorManager.white,
-                            fontSize: FontSizeManager.s14),
-                      ),
-                      Icon(
-                        IconBroken.Arrow___Right_2,
-                        color: ColorManager.white,
-                      ),
-                    ],
-                  ),
-                )
-              ],
-            )),
-      ),
-    );
-  }
-
-
-  Future showGroupSessionDialog(context) => showDialog(
+  Future showGroupSessionDialog(GroupSessionModel model,context,index) => showDialog(
     context: context,
     builder: (context) {
       return Dialog(
@@ -345,7 +469,7 @@ class GroupAppointment extends StatelessWidget {
                       ),
                       Expanded(
                         child: Text(
-                          "Depression",
+                          "${model.title}",
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: getSemiBoldStyle(
@@ -371,7 +495,7 @@ class GroupAppointment extends StatelessWidget {
                       ),
                       Expanded(
                         child: Text(
-                          "Closed",
+                          "${model.status}",
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: getSemiBoldStyle(
@@ -397,7 +521,7 @@ class GroupAppointment extends StatelessWidget {
                       ),
                       Expanded(
                         child: Text(
-                          "20 Jun 2023",
+                          "${model.date}",
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: getSemiBoldStyle(
@@ -422,7 +546,7 @@ class GroupAppointment extends StatelessWidget {
                       ),
                       Expanded(
                         child: Text(
-                          "9:00 AM",
+                          "${model.time}",
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: getSemiBoldStyle(
@@ -448,7 +572,7 @@ class GroupAppointment extends StatelessWidget {
                             color: ColorManager.darkGray, fontSize: 16),
                       ),
                       Text(
-                        "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries",
+                        '${model.description}',
                         maxLines: 10,
                         overflow: TextOverflow.ellipsis,
                         style: getSemiBoldStyle(
@@ -472,7 +596,9 @@ class GroupAppointment extends StatelessWidget {
                         backgroundColor:
                         MaterialStatePropertyAll(Colors.green)),
                     onPressed: () {
-                      //ToDo view user
+                      StudentCubit.getCubit(context).bookGroupSession(index: index);
+                      toast(message: 'Session booked successfully', data:  ToastStates.success);
+                      Navigator.pop(context);
                     },
                     child: Text(
                       "Book",
@@ -511,7 +637,7 @@ class GroupAppointment extends StatelessWidget {
     },
   );
 
-  Future showBookedGroupSessionDialog(context) => showDialog(
+  Future showBookedGroupSessionDialog(GroupSessionModel model,context,index) => showDialog(
     context: context,
     builder: (context) {
       return Dialog(
@@ -552,7 +678,7 @@ class GroupAppointment extends StatelessWidget {
                       ),
                       Expanded(
                         child: Text(
-                          "Depression",
+                          "${model.title}",
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: getSemiBoldStyle(
@@ -578,7 +704,7 @@ class GroupAppointment extends StatelessWidget {
                       ),
                       Expanded(
                         child: Text(
-                          "Opened",
+                          "${model.status}",
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: getSemiBoldStyle(
@@ -604,7 +730,7 @@ class GroupAppointment extends StatelessWidget {
                       ),
                       Expanded(
                         child: Text(
-                          "20 Jun 2023",
+                          "${model.date}",
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: getSemiBoldStyle(
@@ -629,7 +755,7 @@ class GroupAppointment extends StatelessWidget {
                       ),
                       Expanded(
                         child: Text(
-                          "9:00 AM",
+                          "${model.time}",
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: getSemiBoldStyle(
@@ -657,7 +783,7 @@ class GroupAppointment extends StatelessWidget {
                         child: Linkify(
                           onOpen: _onOpen,
                           style: getSemiBoldStyle(color: ColorManager.blue,fontSize: 14),
-                          text: "https://galaxystore.samsung.com/games?langCd=ar",
+                          text: "${model.link}",
                         ),
                       ),
                     ],
@@ -679,7 +805,7 @@ class GroupAppointment extends StatelessWidget {
                             color: ColorManager.darkGray, fontSize: 16),
                       ),
                       Text(
-                        "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries",
+                        '${model.description}',
                         maxLines: 10,
                         overflow: TextOverflow.ellipsis,
                         style: getSemiBoldStyle(
@@ -703,10 +829,30 @@ class GroupAppointment extends StatelessWidget {
                         backgroundColor:
                         MaterialStatePropertyAll(Colors.red)),
                     onPressed: () {
+                      StudentCubit.getCubit(context).UnBookGroupSession(index: index);
+                      toast(message: 'Session Unbooked successfully', data:  ToastStates.success);
                       Navigator.pop(context);
                     },
                     child: Text(
                       "Cancel",
+                      style: getRegularStyle(color: ColorManager.white),
+                    ),
+                  ),
+                  SizedBox(width: 10,),
+                  TextButton(
+                    style: ButtonStyle(
+                        shape: MaterialStatePropertyAll(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(50),
+                          ),
+                        ),
+                        backgroundColor:
+                        MaterialStatePropertyAll(Colors.blue)),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: Text(
+                      "close",
                       style: getRegularStyle(color: ColorManager.white),
                     ),
                   ),

@@ -118,27 +118,27 @@ class HomeAdminView extends StatelessWidget {
                   children: [
                     InkWell(
                       child: Card(
-                          margin: const EdgeInsets.all(5),
-                          clipBehavior: Clip.antiAliasWithSaveLayer,
-                          elevation: 5,
-                          child: Row(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.all(20.0),
-                                child: Text(
-                                  "User management",
-                                  style: getSemiBoldStyle(
-                                      color: ColorManager.darkGray,
-                                      fontSize: 18),
-                                ),
+                        margin: const EdgeInsets.all(5),
+                        clipBehavior: Clip.antiAliasWithSaveLayer,
+                        elevation: 5,
+                        child: Row(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(20.0),
+                              child: Text(
+                                "User management",
+                                style: getSemiBoldStyle(
+                                    color: ColorManager.darkGray, fontSize: 18),
                               ),
-                              const Spacer(),
-                              const Padding(
-                                padding: EdgeInsets.all(8.0),
-                                child: Icon(IconBroken.Arrow___Right_2),
-                              ),
-                            ],
-                          )),
+                            ),
+                            const Spacer(),
+                            const Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Icon(IconBroken.Arrow___Right_2),
+                            ),
+                          ],
+                        ),
+                      ),
                       onTap: () {
                         navigateTo(context, UserManagement());
                       },

@@ -23,8 +23,16 @@ class HomeStudentView extends StatelessWidget {
   Widget build(BuildContext context) {
     StudentCubit.getCubit(context).getStudent(CacheHelper.getData(key: 'uid'));
     return BlocConsumer<StudentCubit, StudentStates>(
-      listener: (context, state) {},
-      builder: (context, state){
+      listener: (context, state) {
+        if (state is GetStudentSuccessState) {
+          StudentCubit.getCubit(context).GetAllGroupSession();
+        }
+        if (state is GetAllGroupSessionSuccessState) {
+          print(
+              '====== =========== ============= = = = = == ${StudentCubit.getCubit(context).allGroupSessionBookingList.isNotEmpty}');
+        }
+      },
+      builder: (context, state) {
         var cubit = StudentCubit.getCubit(context);
         return DefaultTabController(
           length: 2,
@@ -49,7 +57,7 @@ class HomeStudentView extends StatelessWidget {
               elevation: 0.0,
             ),
             body: ConditionalBuilder(
-              condition:cubit.studentModel!=null,
+              condition: cubit.studentModel != null,
               builder: (context) => Column(
                 children: [
                   Container(
@@ -77,12 +85,12 @@ class HomeStudentView extends StatelessWidget {
                             },
                             child: CircleAvatar(
                               radius: 28,
-                              backgroundColor: Theme.of(context)
-                                  .scaffoldBackgroundColor,
+                              backgroundColor:
+                                  Theme.of(context).scaffoldBackgroundColor,
                               child: CircleAvatar(
                                 radius: 25,
-                                backgroundImage: NetworkImage(
-                                    cubit.studentModel!.image!),
+                                backgroundImage:
+                                    NetworkImage(cubit.studentModel!.image!),
                               ),
                             ),
                           ),

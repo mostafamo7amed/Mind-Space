@@ -22,7 +22,6 @@ class Appointment extends StatelessWidget {
         if(state is ChangeStatusSuccessState){
           DoctorCubit.getCubit(context).getAllOfflineAppointment();
           DoctorCubit.getCubit(context).getAllOnlineAppointment();
-
         }
       },
       builder: (context, state) {
@@ -380,7 +379,7 @@ class Appointment extends StatelessWidget {
                           MaterialStatePropertyAll(Colors.green)),
                       onPressed: () {
                         if(model.status== 'Processing'){
-                          cubit.changeAppointmentStatus(model.type!, index, 'Accepted');
+                          cubit.changeAppointmentStatus(appointmentType: model.type!, index: index, status: 'Accepted');
                           Navigator.pop(context);
                           toast(message: 'Appointment Accepted successfully', data: ToastStates.success);
                         }
@@ -404,7 +403,7 @@ class Appointment extends StatelessWidget {
                           MaterialStatePropertyAll(Colors.red)),
                       onPressed: () {
                         if(model.status == 'Processing'){
-                          cubit.changeAppointmentStatus(model.type!, index, 'Rejected');
+                          cubit.changeAppointmentStatus( appointmentType: model.type!,index:  index,status: 'Rejected');
                           Navigator.pop(context);
                           toast(message: 'Appointment Rejected successfully', data: ToastStates.success);
                         }

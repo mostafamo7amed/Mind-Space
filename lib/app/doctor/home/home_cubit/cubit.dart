@@ -180,7 +180,7 @@ class DoctorCubit extends Cubit<DoctorStates> {
     FirebaseFirestore.instance
         .collection('Group Session')
         .doc(groupSessionList[index].groupId)
-        .set(groupSession.toMap()!)
+        .update(groupSession.toMap()!)
         .then((value) {
       emit(EditGroupSessionSuccessState());
     }).catchError((e) {
@@ -191,11 +191,12 @@ class DoctorCubit extends Cubit<DoctorStates> {
   DeleteGroupSession({
     required int index,
   }) {
-    FirebaseFirestore.instance.collection('Group Session')
+    FirebaseFirestore.instance
+        .collection('Group Session')
         .doc(groupSessionList[index].groupId)
         .delete()
         .then((value) {
-          toast(message: 'Session deleted successfully', data: ToastStates.success);
+      toast(message: 'Session deleted successfully', data: ToastStates.success);
       emit(DeleteGroupSessionSuccessState());
     }).catchError((e) {
       emit(DeleteGroupSessionErrorState());
@@ -205,7 +206,8 @@ class DoctorCubit extends Cubit<DoctorStates> {
   DeleteAppointmentSession({
     required int index,
   }) {
-    FirebaseFirestore.instance.collection('Individual Session')
+    FirebaseFirestore.instance
+        .collection('Individual Session')
         .doc(acceptedAppointmentList[index].appointmentId)
         .delete()
         .then((value) {
@@ -215,6 +217,7 @@ class DoctorCubit extends Cubit<DoctorStates> {
       emit(DeleteSessionErrorState());
     });
   }
+
   List<GroupSessionModel> groupSessionList = [];
   void getGroupSession() {
     groupSessionList = [];
@@ -233,7 +236,6 @@ class DoctorCubit extends Cubit<DoctorStates> {
     });
   }
 
-
   List<AppointmentModel> onlineAppointmentList = [];
   List<AppointmentModel> offlineAppointmentList = [];
   List<AppointmentModel> acceptedAppointmentList = [];
@@ -244,13 +246,13 @@ class DoctorCubit extends Cubit<DoctorStates> {
     FirebaseFirestore.instance
         .collection('Individual Session')
         .where('doctorId', isEqualTo: doctorModel!.id)
-        .where('type',isEqualTo: 'Online')
+        .where('type', isEqualTo: 'Online')
         .get()
         .then((value) {
       for (var element in value.docs) {
-        if(AppointmentModel.fromMap(element.data()).status=='Accepted'){
+        if (AppointmentModel.fromMap(element.data()).status == 'Accepted') {
           acceptedAppointmentList.add(AppointmentModel.fromMap(element.data()));
-        }else{
+        } else {
           onlineAppointmentList.add(AppointmentModel.fromMap(element.data()));
         }
       }
@@ -266,13 +268,13 @@ class DoctorCubit extends Cubit<DoctorStates> {
     FirebaseFirestore.instance
         .collection('Individual Session')
         .where('doctorId', isEqualTo: doctorModel!.id)
-        .where('type',isEqualTo: 'At clinic')
+        .where('type', isEqualTo: 'At clinic')
         .get()
         .then((value) {
       for (var element in value.docs) {
-        if(AppointmentModel.fromMap(element.data()).status=='Accepted'){
+        if (AppointmentModel.fromMap(element.data()).status == 'Accepted') {
           acceptedAppointmentList.add(AppointmentModel.fromMap(element.data()));
-        }else{
+        } else {
           offlineAppointmentList.add(AppointmentModel.fromMap(element.data()));
         }
       }
@@ -282,9 +284,42 @@ class DoctorCubit extends Cubit<DoctorStates> {
     });
   }
 
-  void changeAppointmentStatus(String appointmentType,index,String status){
-    if(appointmentType == 'Online'){
+  void changeAppointmentStatus({
+    required String appointmentType,
+    required index,
+    required String status,
+    String? doctorReport,
+  }) {
+    if(status == 'Finished'){
+      String? report = doctorReport != ''
+          ? doctorReport
+          :acceptedAppointmentList[index].doctorReport;
       AppointmentModel appointmentModel = AppointmentModel(
+        acceptedAppointmentList[index].appointmentId,
+        acceptedAppointmentList[index].studentId,
+        acceptedAppointmentList[index].accountType,
+        acceptedAppointmentList[index].date,
+        acceptedAppointmentList[index].time,
+        acceptedAppointmentList[index].link,
+        acceptedAppointmentList[index].type,
+        acceptedAppointmentList[index].doctorId,
+        acceptedAppointmentList[index].studentNickname,
+        status,
+        report,
+        acceptedAppointmentList[index].isRated,
+      );
+      FirebaseFirestore.instance
+          .collection('Individual Session')
+          .doc(acceptedAppointmentList[index].appointmentId)
+          .update(appointmentModel.toMap()!)
+          .then((value) {
+        emit(ChangeStatusSuccessState());
+      }).catchError((e) {
+        emit(ChangeStatusErrorState());
+      });
+    }else {
+      if (appointmentType == 'Online') {
+        AppointmentModel appointmentModel = AppointmentModel(
           onlineAppointmentList[index].appointmentId,
           onlineAppointmentList[index].studentId,
           onlineAppointmentList[index].accountType,
@@ -294,18 +329,21 @@ class DoctorCubit extends Cubit<DoctorStates> {
           onlineAppointmentList[index].type,
           onlineAppointmentList[index].doctorId,
           onlineAppointmentList[index].studentNickname,
-          status);
-      FirebaseFirestore.instance
-          .collection('Individual Session')
-          .doc(onlineAppointmentList[index].appointmentId)
-          .update(appointmentModel.toMap()!)
-          .then((value) {
-        emit(ChangeStatusSuccessState());
-      }).catchError((e) {
-        emit(ChangeStatusErrorState());
-      });
-    }else{
-      AppointmentModel appointmentModel = AppointmentModel(
+          status,
+          onlineAppointmentList[index].doctorReport,
+          onlineAppointmentList[index].isRated,
+        );
+        FirebaseFirestore.instance
+            .collection('Individual Session')
+            .doc(onlineAppointmentList[index].appointmentId)
+            .update(appointmentModel.toMap()!)
+            .then((value) {
+          emit(ChangeStatusSuccessState());
+        }).catchError((e) {
+          emit(ChangeStatusErrorState());
+        });
+      } else {
+        AppointmentModel appointmentModel = AppointmentModel(
           offlineAppointmentList[index].appointmentId,
           offlineAppointmentList[index].studentId,
           offlineAppointmentList[index].accountType,
@@ -315,42 +353,48 @@ class DoctorCubit extends Cubit<DoctorStates> {
           offlineAppointmentList[index].type,
           offlineAppointmentList[index].doctorId,
           offlineAppointmentList[index].studentNickname,
-          status);
-      FirebaseFirestore.instance
-          .collection('Individual Session')
-          .doc(offlineAppointmentList[index].appointmentId)
-          .update(appointmentModel.toMap()!)
-          .then((value) {
-        emit(ChangeStatusSuccessState());
-      }).catchError((e) {
-        emit(ChangeStatusErrorState());
-      });
+          status,
+          offlineAppointmentList[index].doctorReport,
+          offlineAppointmentList[index].isRated,
+        );
+        FirebaseFirestore.instance
+            .collection('Individual Session')
+            .doc(offlineAppointmentList[index].appointmentId)
+            .update(appointmentModel.toMap()!)
+            .then((value) {
+          emit(ChangeStatusSuccessState());
+        }).catchError((e) {
+          emit(ChangeStatusErrorState());
+        });
+      }
     }
   }
 
-  void addAppointmentLink(index,String link){
-      AppointmentModel appointmentModel = AppointmentModel(
-          acceptedAppointmentList[index].appointmentId,
-          acceptedAppointmentList[index].studentId,
-          acceptedAppointmentList[index].accountType,
-          acceptedAppointmentList[index].date,
-          acceptedAppointmentList[index].time,
-          link,
-          acceptedAppointmentList[index].type,
-          acceptedAppointmentList[index].doctorId,
-          acceptedAppointmentList[index].studentNickname,
-          acceptedAppointmentList[index].status);
-      FirebaseFirestore.instance
-          .collection('Individual Session')
-          .doc(acceptedAppointmentList[index].appointmentId)
-          .update(appointmentModel.toMap()!)
-          .then((value) {
-        emit(AddLinkSuccessState());
-      }).catchError((e) {
-        emit(AddLinkErrorState());
-      });
+  void addAppointmentLink(index, String link) {
+    AppointmentModel appointmentModel = AppointmentModel(
+      acceptedAppointmentList[index].appointmentId,
+      acceptedAppointmentList[index].studentId,
+      acceptedAppointmentList[index].accountType,
+      acceptedAppointmentList[index].date,
+      acceptedAppointmentList[index].time,
+      link,
+      acceptedAppointmentList[index].type,
+      acceptedAppointmentList[index].doctorId,
+      acceptedAppointmentList[index].studentNickname,
+      acceptedAppointmentList[index].status,
+      acceptedAppointmentList[index].doctorReport,
+      acceptedAppointmentList[index].isRated,
+    );
+    FirebaseFirestore.instance
+        .collection('Individual Session')
+        .doc(acceptedAppointmentList[index].appointmentId)
+        .update(appointmentModel.toMap()!)
+        .then((value) {
+      emit(AddLinkSuccessState());
+    }).catchError((e) {
+      emit(AddLinkErrorState());
+    });
   }
-
 
   String generateRandomString(int len) {
     var r = Random();

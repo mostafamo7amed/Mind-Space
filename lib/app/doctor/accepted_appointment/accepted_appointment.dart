@@ -6,7 +6,6 @@ import 'package:mind_space/app/doctor/home/home_cubit/cubit.dart';
 import 'package:mind_space/app/doctor/home/home_cubit/states.dart';
 import 'package:mind_space/app/models/appointment.dart';
 import 'package:url_launcher/url_launcher.dart';
-
 import '../../../styles/icons_broken.dart';
 import '../../resources/assets_manager.dart';
 import '../../resources/color_manager.dart';
@@ -16,6 +15,8 @@ import '../../resources/styles_manager.dart';
 class AcceptedAppointment extends StatelessWidget {
   AcceptedAppointment({Key? key}) : super(key: key);
   var formKey = GlobalKey<FormState>();
+  var formKey2 = GlobalKey<FormState>();
+  var reportController = TextEditingController();
   var linkController = TextEditingController();
   @override
   Widget build(BuildContext context) {
@@ -573,84 +574,111 @@ class AcceptedAppointment extends StatelessWidget {
               padding: const EdgeInsets.all(10.0),
               child: SingleChildScrollView(
                 physics: BouncingScrollPhysics(),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Row(
-                      children: [
-                        Spacer(),
-                        ImageIcon(
-                          AssetImage(ImageAssets.point),
-                          size: 12,
-                          color: ColorManager.error,
-                        ),
-                      ],
-                    ),
-                    Text(
-                      "Appointment session",
-                      style: getBoldStyle(
-                          color: ColorManager.darkGray, fontSize: 18),
-                    ),
-                    SizedBox(height: 10,),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Expanded(
-                          child: Text('Do you want to confirm finishing\n this Session?',
-                            style: getRegularStyle(color: ColorManager.black,fontSize: 15),),
-                        )
-                      ],
-                    ),
-                    SizedBox(height: 10,),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        TextButton(
-                          style: ButtonStyle(
-                              shape: MaterialStatePropertyAll(
-                                RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(50),
-                                ),
-                              ),
-                              backgroundColor:
-                              MaterialStatePropertyAll(Colors.red)),
-                          onPressed: () {
-                            DoctorCubit.getCubit(context).changeAppointmentStatus(model.type!, index, 'Finished');
-                            Navigator.pop(context);
-                          },
-                          child: Text(
-                            "Delete",
-                            style: getRegularStyle(color: ColorManager.white),
+                child: Form(
+                  key: formKey2,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Row(
+                        children: [
+                          Spacer(),
+                          ImageIcon(
+                            AssetImage(ImageAssets.point),
+                            size: 12,
+                            color: ColorManager.error,
+                          ),
+                        ],
+                      ),
+                      Text(
+                        "Appointment session",
+                        style: getBoldStyle(
+                            color: ColorManager.darkGray, fontSize: 18),
+                      ),
+                      SizedBox(height: 10,),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Expanded(
+                            child: Text('Do you want to confirm finishing\n this Session?',
+                              style: getRegularStyle(color: ColorManager.black,fontSize: 15),),
+                          )
+                        ],
+                      ),
+                      SizedBox(height: 10,),
+                      TextFormField(
+                        controller: reportController,
+                        maxLines: null,
+                        style: getRegularStyle(color: ColorManager.black,fontSize: 16),
+                        decoration: const InputDecoration(
+                          contentPadding: EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 5),
+                          hintText: 'Report',
+                          border: OutlineInputBorder(
+                            borderRadius:
+                            BorderRadius.all(Radius.circular(10.0)),
                           ),
                         ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        TextButton(
-                          style: ButtonStyle(
-                              shape: MaterialStatePropertyAll(
-                                RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(50),
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Enter Student report';
+                          }
+                          return null;
+                        },
+                        keyboardType: TextInputType.text,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          TextButton(
+                            style: ButtonStyle(
+                                shape: MaterialStatePropertyAll(
+                                  RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(50),
+                                  ),
                                 ),
-                              ),
-                              backgroundColor:
-                              MaterialStatePropertyAll(Colors.blue)),
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          child: Text(
-                            "Cancel",
-                            style: getRegularStyle(color: ColorManager.white),
+                                backgroundColor:
+                                MaterialStatePropertyAll(Colors.red)),
+                            onPressed: () {
+                              if(formKey2.currentState!.validate()){
+                                DoctorCubit.getCubit(context)
+                                    .changeAppointmentStatus(appointmentType: model.type!, index: index,status: 'Finished',doctorReport: reportController.text);
+                                Navigator.pop(context);
+                              }
+                            },
+                            child: Text(
+                              "Finish",
+                              style: getRegularStyle(color: ColorManager.white),
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                  ],
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          TextButton(
+                            style: ButtonStyle(
+                                shape: MaterialStatePropertyAll(
+                                  RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(50),
+                                  ),
+                                ),
+                                backgroundColor:
+                                MaterialStatePropertyAll(Colors.blue)),
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: Text(
+                              "Cancel",
+                              style: getRegularStyle(color: ColorManager.white),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

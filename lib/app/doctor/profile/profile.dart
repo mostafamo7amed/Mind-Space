@@ -26,7 +26,7 @@ class Profile extends StatelessWidget {
 
         return Scaffold(
           backgroundColor: ColorManager.background,
-          body:  ConditionalBuilder(
+          body: ConditionalBuilder(
             condition: cubit.doctorModel != null,
             builder: (context) {
               return Column(
@@ -165,7 +165,7 @@ class Profile extends StatelessWidget {
                           ],
                           ),
                         ),
-                        SizedBox(
+                        /*SizedBox(
                           height: 100,
                           width: 200,
                           child: Align(
@@ -192,7 +192,7 @@ class Profile extends StatelessWidget {
                                   ],
                                 )),
                           ),
-                        ),
+                        ),*/
                       ],
                     ),
                   ),
