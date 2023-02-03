@@ -53,3 +53,6 @@ class ChangeStatusErrorState extends DoctorStates{}
 
 class AddLinkSuccessState extends DoctorStates{}
 class AddLinkErrorState extends DoctorStates{}
+
+class ChangeGenderState extends DoctorStates{}
+class DeletePhotoState extends DoctorStates{}

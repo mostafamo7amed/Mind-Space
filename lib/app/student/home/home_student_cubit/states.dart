@@ -25,7 +25,7 @@ class RateErrorState extends StudentStates {}
 class GetAllGroupSessionLoadingState extends StudentStates {}
 class GetAllGroupSessionSuccessState extends StudentStates {}
 class GetAllGroupSessionErrorState extends StudentStates {}
-
+class ChangeGenderState extends StudentStates{}
 class GetAppointmentDateState extends StudentStates {}
 class GetAppointmentTimeState extends StudentStates {}
 
@@ -55,3 +55,4 @@ class GetOfflineAppointmentErrorState extends StudentStates{}
 class ChangeRateStatusSuccessState extends StudentStates{}
 class ChangeRateStatusErrorState extends StudentStates{}
 class GetRateState extends StudentStates{}
+class DeletePhotoState extends StudentStates{}

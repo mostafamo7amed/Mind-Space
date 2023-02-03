@@ -69,7 +69,7 @@ class StudentCubit extends Cubit<StudentStates> {
         '',
         false);
     FirebaseFirestore.instance
-        .collection('Individual Session')
+        .collection('Appointment')
         .doc(appointmentId)
         .set(appointmentModel.toMap()!)
         .then((value) {
@@ -99,12 +99,12 @@ class StudentCubit extends Cubit<StudentStates> {
     allGroupSessionList = [];
     allGroupSessionBookingList = [];
     emit(GetAllGroupSessionLoadingState());
-    FirebaseFirestore.instance.collection('Group Session').get().then((value) {
+    FirebaseFirestore.instance.collection('Session').get().then((value) {
       for (var element in value.docs) {
         FirebaseFirestore.instance
-            .collection('Group Session')
+            .collection('Session')
             .doc(element.id)
-            .collection('Bookings')
+            .collection('Subscription')
             .get()
             .then((value) {
           for (var elements in value.docs) {
@@ -125,9 +125,9 @@ class StudentCubit extends Cubit<StudentStates> {
 
   bookGroupSession({required int index}) {
     FirebaseFirestore.instance
-        .collection('Group Session')
+        .collection('Session')
         .doc(allGroupSessionList[index].groupId)
-        .collection('Bookings')
+        .collection('Subscription')
         .doc(studentModel!.id)
         .set({
       'studentId': studentModel!.id,
@@ -141,9 +141,9 @@ class StudentCubit extends Cubit<StudentStates> {
 
   UnBookGroupSession({required int index}) {
     FirebaseFirestore.instance
-        .collection('Group Session')
+        .collection('Session')
         .doc(allGroupSessionBookingList[index].groupId)
-        .collection('Bookings')
+        .collection('Subscription')
         .doc(studentModel!.id)
         .delete()
         .then((value) {
@@ -215,7 +215,7 @@ class StudentCubit extends Cubit<StudentStates> {
     onlineAppointmentList = [];
     emit(GetOfflineAppointmentLoadingState());
     FirebaseFirestore.instance
-        .collection('Individual Session')
+        .collection('Appointment')
         .where('studentId', isEqualTo: studentModel!.id)
         .where('type', isEqualTo: 'Online')
         .get()
@@ -233,7 +233,7 @@ class StudentCubit extends Cubit<StudentStates> {
     offlineAppointmentList = [];
     emit(GetOnlineAppointmentLoadingState());
     FirebaseFirestore.instance
-        .collection('Individual Session')
+        .collection('Appointment')
         .where('studentId', isEqualTo: studentModel!.id)
         .where('type', isEqualTo: 'At clinic')
         .get()
@@ -314,7 +314,7 @@ class StudentCubit extends Cubit<StudentStates> {
         true,
       );
       FirebaseFirestore.instance
-          .collection('Individual Session')
+          .collection('Appointment')
           .doc(onlineAppointmentList[index].appointmentId)
           .update(appointmentModel.toMap()!)
           .then((value) {
@@ -339,7 +339,7 @@ class StudentCubit extends Cubit<StudentStates> {
         true,
       );
       FirebaseFirestore.instance
-          .collection('Individual Session')
+          .collection('Appointment')
           .doc(offlineAppointmentList[index].appointmentId)
           .update(appointmentModel.toMap()!)
           .then((value) {
@@ -351,6 +351,15 @@ class StudentCubit extends Cubit<StudentStates> {
     }
   }
 
+  int gender =1;
+  void changeGender(int value){
+    gender = value;
+    emit(ChangeGenderState());
+  }
+  void deletePhoto(){
+    imageUri = 'https://www.personality-insights.com/wp-content/uploads/2017/12/default-profile-pic-e1513291410505.jpg';
+    emit(DeletePhotoState());
+  }
   String generateRandomString(int len) {
     var r = Random();
     const _chars =

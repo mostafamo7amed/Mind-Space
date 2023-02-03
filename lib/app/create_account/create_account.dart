@@ -186,8 +186,10 @@ class CreateAccount extends StatelessWidget {
                                     activeColor: ColorManager.primary,
                                     focusColor: ColorManager.primary,
                                     value: 1,
-                                    groupValue: _value,
-                                    onChanged: (value) {}),
+                                    groupValue: cubit.gender,
+                                    onChanged: (value) {
+                                      cubit.changeGender(value!);
+                                    }),
                                 Text(
                                   "Male",
                                   style: getRegularStyle(
@@ -200,8 +202,10 @@ class CreateAccount extends StatelessWidget {
                                     activeColor: ColorManager.primary,
                                     focusColor: ColorManager.primary,
                                     value: 2,
-                                    groupValue: _value,
-                                    onChanged: (value) {}),
+                                    groupValue: cubit.gender,
+                                    onChanged: (value) {
+                                      cubit.changeGender(value!);
+                                    }),
                                 Text(
                                   "Female",
                                   style: getRegularStyle(
@@ -238,7 +242,8 @@ class CreateAccount extends StatelessWidget {
                                   if (formKey.currentState!.validate()) {
                                     String gender = '';
                                     String image = '';
-                                    gender = _value == 1 ? 'Male' : 'Female';
+                                    gender = cubit.gender == 1 ? 'Male' : 'Female';
+                                    print(gender);
                                     image = cubit.imageUri != ''
                                         ? cubit.imageUri
                                         : 'https://www.personality-insights.com/wp-content/uploads/2017/12/default-profile-pic-e1513291410505.jpg';

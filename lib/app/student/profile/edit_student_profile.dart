@@ -22,6 +22,7 @@ class EditStudentProfile extends StatelessWidget {
   int _value = 1;
   @override
   Widget build(BuildContext context) {
+    StudentCubit.getCubit(context).studentModel!.gender == 'Male' ? StudentCubit.getCubit(context).changeGender(1)  : StudentCubit.getCubit(context).changeGender(2) ;
     return BlocConsumer<StudentCubit, StudentStates>(
       listener: (context, state) {
         if (state is UpdateStudentSuccessState) {
@@ -41,7 +42,6 @@ class EditStudentProfile extends StatelessWidget {
               phoneController.text = cubit.studentModel!.phone!;
               departController.text = cubit.studentModel!.department!;
               dateController.text = cubit.studentModel!.dateOfBirth!;
-              cubit.studentModel!.gender == 'Male' ? _value = 1 : _value = 2;
               return SafeArea(
                 child: Form(
                   key: formKey,
@@ -62,6 +62,30 @@ class EditStudentProfile extends StatelessWidget {
                                   fit: BoxFit.fill,
                                 ),
                               ),
+                              Padding(
+                                padding: const EdgeInsets.only(left: 20.0),
+                                child: Align(
+                                  alignment: Alignment.bottomLeft,
+                                  child: Row(
+                                    children: [
+                                      CircleAvatar(
+                                        radius: 16,
+                                        child: IconButton(
+                                          padding: EdgeInsets.zero,
+                                          onPressed: ()async {
+                                             cubit.deletePhoto();
+                                          },
+                                          icon: Icon(IconBroken.Delete,size: 22,),
+                                          color: ColorManager.white,
+                                        ),
+                                      ),
+                                      Text(' Delete photo', style: getRegularStyle(
+                                          color: ColorManager.black,
+                                          fontSize: 14) ,)
+                                    ],
+                                  ),
+                                ),
+                              ),
                               Align(
                                 alignment: Alignment.bottomCenter,
                                 child: Container(
@@ -69,21 +93,33 @@ class EditStudentProfile extends StatelessWidget {
                                   child: Stack(
                                     alignment: Alignment.bottomCenter,
                                     children: [
+                                      cubit.imageUri=='https://www.personality-insights.com/wp-content/uploads/2017/12/default-profile-pic-e1513291410505.jpg'?
+                                      CircleAvatar(
+                                        radius: 48,
+                                        backgroundColor: Theme.of(context)
+                                            .scaffoldBackgroundColor,
+                                        child:
+                                           CircleAvatar(
+                                                radius: 55,
+                                                backgroundImage: NetworkImage(
+                                                    'https://www.personality-insights.com/wp-content/uploads/2017/12/default-profile-pic-e1513291410505.jpg'),
+                                              ),
+                                      ):
                                       CircleAvatar(
                                         radius: 48,
                                         backgroundColor: Theme.of(context)
                                             .scaffoldBackgroundColor,
                                         child: cubit.profileImage == null
                                             ? CircleAvatar(
-                                                radius: 55,
-                                                backgroundImage: NetworkImage(
-                                                    '${cubit.studentModel!.image}'),
-                                              )
+                                          radius: 55,
+                                          backgroundImage: NetworkImage(
+                                              '${cubit.studentModel!.image}'),
+                                        )
                                             : CircleAvatar(
-                                                radius: 55,
-                                                backgroundImage: FileImage(
-                                                    cubit.profileImage!),
-                                              ),
+                                          radius: 55,
+                                          backgroundImage: FileImage(
+                                              cubit.profileImage!),
+                                        ),
                                       ),
                                       Padding(
                                         padding: const EdgeInsets.all(8.0),
@@ -104,7 +140,7 @@ class EditStudentProfile extends StatelessWidget {
                                             ),
                                           ),
                                         ),
-                                      )
+                                      ),
                                     ],
                                   ),
                                 ),
@@ -176,6 +212,7 @@ class EditStudentProfile extends StatelessWidget {
                                   },
                                   type: TextInputType.datetime,
                                   context: context),
+
                               Row(
                                 children: [
                                   Text(
@@ -188,8 +225,10 @@ class EditStudentProfile extends StatelessWidget {
                                       activeColor: ColorManager.primary,
                                       focusColor: ColorManager.primary,
                                       value: 1,
-                                      groupValue: _value,
-                                      onChanged: (value) {}),
+                                      groupValue: cubit.gender,
+                                      onChanged: (value) {
+                                        cubit.changeGender(value!);
+                                      }),
                                   Text(
                                     "Male",
                                     style: getRegularStyle(
@@ -203,8 +242,10 @@ class EditStudentProfile extends StatelessWidget {
                                       activeColor: ColorManager.primary,
                                       focusColor: ColorManager.primary,
                                       value: 2,
-                                      groupValue: _value,
-                                      onChanged: (value) {}),
+                                      groupValue: cubit.gender,
+                                      onChanged: (value) {
+                                        cubit.changeGender(value!);
+                                      }),
                                   Text(
                                     "Female",
                                     style: getRegularStyle(
@@ -244,9 +285,13 @@ class EditStudentProfile extends StatelessWidget {
                                       String gender = '';
                                       String image = '';
                                       gender = _value == 1 ? 'Male' : 'Female';
-                                      image = cubit.profileImage == null
-                                          ? cubit.studentModel!.image!
-                                          : cubit.imageUri;
+                                      if(cubit.profileImage == null){
+                                        image=cubit.studentModel!.image!;
+                                      }else if(cubit.imageUri!=''){
+                                        image= cubit.imageUri;
+                                      }else{
+                                        cubit.studentModel!.image!;
+                                      }
                                       cubit.updateStudentProfile(
                                         name: nameController.text,
                                         phone: phoneController.text,

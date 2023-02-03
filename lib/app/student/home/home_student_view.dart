@@ -29,7 +29,7 @@ class HomeStudentView extends StatelessWidget {
         }
         if (state is GetAllGroupSessionSuccessState) {
           print(
-              '====== =========== ============= = = = = == ${StudentCubit.getCubit(context).allGroupSessionBookingList.isNotEmpty}');
+              '${StudentCubit.getCubit(context).allGroupSessionBookingList.isNotEmpty}');
         }
       },
       builder: (context, state) {

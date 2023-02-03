@@ -132,7 +132,7 @@ class AdminCubit extends Cubit<AdminStates> {
   List<AppointmentModel> searchAppointmentList=[];
   void search(String value){
     searchAppointmentList = allAppointmentList.where((element) {
-      String date = element.date!.toLowerCase();
+      String date = element.type!.toLowerCase();
       return date.contains(value.toLowerCase());
     }).toList();
     emit(ChangeSearchListState());
@@ -144,7 +144,7 @@ class AdminCubit extends Cubit<AdminStates> {
   }) {
     if(isSearch){
       FirebaseFirestore.instance
-          .collection('Individual Session')
+          .collection('Appointment')
           .doc(searchAppointmentList[index].appointmentId)
           .delete()
           .then((value) {
@@ -155,7 +155,7 @@ class AdminCubit extends Cubit<AdminStates> {
       });
     }else{
       FirebaseFirestore.instance
-          .collection('Individual Session')
+          .collection('Appointment')
           .doc(allAppointmentList[index].appointmentId)
           .delete()
           .then((value) {
@@ -188,7 +188,7 @@ class AdminCubit extends Cubit<AdminStates> {
         searchAppointmentList[index].isRated,
       );
       FirebaseFirestore.instance
-          .collection('Individual Session')
+          .collection('Appointment')
           .doc(searchAppointmentList[index].appointmentId)
           .update(appointmentModel.toMap()!)
           .then((value) {
@@ -213,7 +213,7 @@ class AdminCubit extends Cubit<AdminStates> {
         allAppointmentList[index].isRated,
       );
       FirebaseFirestore.instance
-          .collection('Individual Session')
+          .collection('Appointment')
           .doc(allAppointmentList[index].appointmentId)
           .update(appointmentModel.toMap()!)
           .then((value) {

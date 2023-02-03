@@ -46,10 +46,7 @@ class LoginView extends StatelessWidget {
                           SizedBox(
                             height: 200,
                             width: 200,
-                            child: Image.asset(ImageAssets.splashLogo),
-                          ),
-                          const SizedBox(
-                            height: 10,
+                            child: Image.asset(ImageAssets.splashLogo,fit:BoxFit.cover,),
                           ),
                           Text(
                             'Login',

@@ -30,10 +30,11 @@ class _PreviousSessionState extends State<PreviousSession> {
   Widget build(BuildContext context) {
     return BlocConsumer<StudentCubit, StudentStates>(
       listener: (context, state) {
-        if(state is GetDoctorForRateSuccessState){
-          StudentCubit.getCubit(context).Rate(StudentCubit.getCubit(context).rate!);
+        if (state is GetDoctorForRateSuccessState) {
+          StudentCubit.getCubit(context)
+              .Rate(StudentCubit.getCubit(context).rate!);
         }
-        if(state is ChangeRateStatusSuccessState){
+        if (state is ChangeRateStatusSuccessState) {
           StudentCubit.getCubit(context).getAllOfflinePreviousAppointment();
           StudentCubit.getCubit(context).getAllOnlinePreviousAppointment();
         }
@@ -94,7 +95,7 @@ class _PreviousSessionState extends State<PreviousSession> {
                           fallback: (context) => SizedBox(
                             height: 25,
                             width: 25,
-                            child:  Center(
+                            child: Center(
                               child: Text(
                                 'There is no at clinic appointment',
                                 style: getRegularStyle(
@@ -415,7 +416,7 @@ class _PreviousSessionState extends State<PreviousSession> {
 
   Future showAppointmentDialog(AppointmentModel model, context, index) {
     var cubit = StudentCubit.getCubit(context);
-    return  showDialog(
+    return showDialog(
       context: context,
       builder: (context) {
         return Dialog(
@@ -440,8 +441,8 @@ class _PreviousSessionState extends State<PreviousSession> {
                 ),
                 Text(
                   "Individual session",
-                  style: getBoldStyle(
-                      color: ColorManager.darkGray, fontSize: 18),
+                  style:
+                      getBoldStyle(color: ColorManager.darkGray, fontSize: 18),
                 ),
                 SizedBox(
                   height: 10,
@@ -511,7 +512,7 @@ class _PreviousSessionState extends State<PreviousSession> {
                               cubit.changeRate(value);
                             },
                             minRating: 3,
-                            initialRating: cubit.rate==null?0:cubit.rate!,
+                            initialRating: cubit.rate == null ? 0 : cubit.rate!,
                             ignoreGestures: model.isRated!,
                             allowHalfRating: true,
                             updateOnDrag: true,
@@ -528,27 +529,31 @@ class _PreviousSessionState extends State<PreviousSession> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    TextButton(
-                      style: ButtonStyle(
-                          shape: MaterialStatePropertyAll(
-                            RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(50),
+                    if (model.status == 'Finished')
+                      TextButton(
+                        style: ButtonStyle(
+                            shape: MaterialStatePropertyAll(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(50),
+                              ),
                             ),
-                          ),
-                          backgroundColor:
-                          MaterialStatePropertyAll(Colors.green)),
-                      onPressed: () {
-                        if(cubit.rate!=null){
-                          cubit.getRateDoctor(model.doctorId!, cubit.rate!, index, model.type!);
-                          Navigator.pop(context);
-                        }
-                      },
-                      child: Text(
-                        "save",
-                        style: getRegularStyle(color: ColorManager.white),
+                            backgroundColor:
+                                MaterialStatePropertyAll(Colors.green)),
+                        onPressed: () {
+                          if (cubit.rate != null) {
+                            cubit.getRateDoctor(model.doctorId!, cubit.rate!,
+                                index, model.type!);
+                            Navigator.pop(context);
+                          }
+                        },
+                        child: Text(
+                          "save",
+                          style: getRegularStyle(color: ColorManager.white),
+                        ),
                       ),
+                    SizedBox(
+                      width: 10,
                     ),
-                    SizedBox(width: 10,),
                     TextButton(
                       style: ButtonStyle(
                           shape: MaterialStatePropertyAll(
@@ -557,7 +562,7 @@ class _PreviousSessionState extends State<PreviousSession> {
                             ),
                           ),
                           backgroundColor:
-                          MaterialStatePropertyAll(Colors.red)),
+                              MaterialStatePropertyAll(Colors.red)),
                       onPressed: () {
                         Navigator.pop(context);
                       },

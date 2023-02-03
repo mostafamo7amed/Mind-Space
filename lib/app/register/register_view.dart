@@ -63,7 +63,7 @@ class _RegisterViewState extends State<RegisterView> {
                           SizedBox(
                             height: 200,
                             width: 200,
-                            child: Image.asset(ImageAssets.splashLogo),
+                            child: Image.asset(ImageAssets.splashLogo,fit:BoxFit.cover,),
                           ),
                           const SizedBox(
                             height: 10,

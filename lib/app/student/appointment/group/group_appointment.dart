@@ -87,9 +87,10 @@ class GroupAppointment extends StatelessWidget {
                       condition:cubit.allGroupSessionList.isNotEmpty,
                       builder: (context) => groupSessionListView(context),
                       fallback: (context) => Center(
-                        child: CircularProgressIndicator(
-                          strokeWidth: 3,
-                          backgroundColor: ColorManager.primary,
+                        child: Text(
+                          'There is no session',
+                          style: getRegularStyle(
+                              color: ColorManager.gray, fontSize: 18),
                         ),
                       ),
                     ),
@@ -489,6 +490,32 @@ class GroupAppointment extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
+                        "Doctor : ",
+                        style: getSemiBoldStyle(
+                            color: ColorManager.darkGray, fontSize: 16),
+                      ),
+                      Expanded(
+                        child: Text(
+                          "${model.doctorName}",
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: getSemiBoldStyle(
+                              color: ColorManager.darkGray, fontSize: 16),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              SizedBox(
+                width: double.infinity,
+                child: Padding(
+                  padding:
+                  const EdgeInsets.only(left: 10.0, right: 10.0, top: 10.0),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
                         "Status : ",
                         style: getSemiBoldStyle(
                             color: ColorManager.darkGray, fontSize: 16),
@@ -679,6 +706,31 @@ class GroupAppointment extends StatelessWidget {
                       Expanded(
                         child: Text(
                           "${model.title}",
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: getSemiBoldStyle(
+                              color: ColorManager.darkGray, fontSize: 16),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              SizedBox(
+                width: double.infinity,
+                child: Padding(
+                  padding:
+                  const EdgeInsets.only(left: 10.0, right: 10.0, top: 10.0),
+                  child: Row(
+                    children: [
+                      Text(
+                        "Doctor : ",
+                        style: getSemiBoldStyle(
+                            color: ColorManager.darkGray, fontSize: 16),
+                      ),
+                      Expanded(
+                        child: Text(
+                          "${model.doctorName}",
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: getSemiBoldStyle(

@@ -150,7 +150,7 @@ class DoctorCubit extends Cubit<DoctorStates> {
         doctorModel!.rate,
         doctorModel!.id);
     FirebaseFirestore.instance
-        .collection('Group Session')
+        .collection('Session')
         .doc(docId)
         .set(groupSession.toMap()!)
         .then((value) {
@@ -178,7 +178,7 @@ class DoctorCubit extends Cubit<DoctorStates> {
         groupSessionList[index].doctorRate,
         groupSessionList[index].doctorId);
     FirebaseFirestore.instance
-        .collection('Group Session')
+        .collection('Session')
         .doc(groupSessionList[index].groupId)
         .update(groupSession.toMap()!)
         .then((value) {
@@ -192,7 +192,7 @@ class DoctorCubit extends Cubit<DoctorStates> {
     required int index,
   }) {
     FirebaseFirestore.instance
-        .collection('Group Session')
+        .collection('Session')
         .doc(groupSessionList[index].groupId)
         .delete()
         .then((value) {
@@ -207,7 +207,7 @@ class DoctorCubit extends Cubit<DoctorStates> {
     required int index,
   }) {
     FirebaseFirestore.instance
-        .collection('Individual Session')
+        .collection('Appointment')
         .doc(acceptedAppointmentList[index].appointmentId)
         .delete()
         .then((value) {
@@ -223,7 +223,7 @@ class DoctorCubit extends Cubit<DoctorStates> {
     groupSessionList = [];
     emit(GetGroupSessionLoadingState());
     FirebaseFirestore.instance
-        .collection('Group Session')
+        .collection('Session')
         .where('doctorId', isEqualTo: doctorModel!.id)
         .get()
         .then((value) {
@@ -244,7 +244,7 @@ class DoctorCubit extends Cubit<DoctorStates> {
     acceptedAppointmentList = [];
     emit(GetOfflineAppointmentLoadingState());
     FirebaseFirestore.instance
-        .collection('Individual Session')
+        .collection('Appointment')
         .where('doctorId', isEqualTo: doctorModel!.id)
         .where('type', isEqualTo: 'Online')
         .get()
@@ -266,7 +266,7 @@ class DoctorCubit extends Cubit<DoctorStates> {
     acceptedAppointmentList = [];
     emit(GetOnlineAppointmentLoadingState());
     FirebaseFirestore.instance
-        .collection('Individual Session')
+        .collection('Appointment')
         .where('doctorId', isEqualTo: doctorModel!.id)
         .where('type', isEqualTo: 'At clinic')
         .get()
@@ -309,7 +309,7 @@ class DoctorCubit extends Cubit<DoctorStates> {
         acceptedAppointmentList[index].isRated,
       );
       FirebaseFirestore.instance
-          .collection('Individual Session')
+          .collection('Appointment')
           .doc(acceptedAppointmentList[index].appointmentId)
           .update(appointmentModel.toMap()!)
           .then((value) {
@@ -334,7 +334,7 @@ class DoctorCubit extends Cubit<DoctorStates> {
           onlineAppointmentList[index].isRated,
         );
         FirebaseFirestore.instance
-            .collection('Individual Session')
+            .collection('Appointment')
             .doc(onlineAppointmentList[index].appointmentId)
             .update(appointmentModel.toMap()!)
             .then((value) {
@@ -358,7 +358,7 @@ class DoctorCubit extends Cubit<DoctorStates> {
           offlineAppointmentList[index].isRated,
         );
         FirebaseFirestore.instance
-            .collection('Individual Session')
+            .collection('Appointment')
             .doc(offlineAppointmentList[index].appointmentId)
             .update(appointmentModel.toMap()!)
             .then((value) {
@@ -386,7 +386,7 @@ class DoctorCubit extends Cubit<DoctorStates> {
       acceptedAppointmentList[index].isRated,
     );
     FirebaseFirestore.instance
-        .collection('Individual Session')
+        .collection('Appointment')
         .doc(acceptedAppointmentList[index].appointmentId)
         .update(appointmentModel.toMap()!)
         .then((value) {
@@ -396,6 +396,16 @@ class DoctorCubit extends Cubit<DoctorStates> {
     });
   }
 
+  int gender =1;
+  void changeGender(int value){
+    gender = value;
+    emit(ChangeGenderState());
+  }
+
+  void deletePhoto(){
+    imageUri = 'https://www.personality-insights.com/wp-content/uploads/2017/12/default-profile-pic-e1513291410505.jpg';
+    emit(DeletePhotoState());
+  }
   String generateRandomString(int len) {
     var r = Random();
     const _chars =

@@ -8,6 +8,7 @@ class CreateUserSuccessState extends CreateStates {
   CreateUserSuccessState(this.uid);
 }
 class CreateUserErrorState extends CreateStates {}
+class ChangeGenderState extends CreateStates {}
 
 class CreatePikImageSuccessState extends CreateStates{}
 class CreatePikImageErrorState extends CreateStates{}

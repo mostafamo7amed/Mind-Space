@@ -20,9 +20,10 @@ class EditDoctorProfile extends StatelessWidget {
   var phoneController = TextEditingController();
   var departController = TextEditingController();
   var dateController = TextEditingController();
-  int _value = 1;
   @override
   Widget build(BuildContext context) {
+    DoctorCubit.getCubit(context).doctorModel!.gender == 'Male' ? DoctorCubit.getCubit(context).changeGender(1)  : DoctorCubit.getCubit(context).changeGender(2) ;
+
     return BlocConsumer<DoctorCubit, DoctorStates>(
       listener: (context, state) {
         if(state is UpdateDoctorSuccessState){
@@ -41,7 +42,6 @@ class EditDoctorProfile extends StatelessWidget {
               phoneController.text = cubit.doctorModel!.phone!;
               departController.text = cubit.doctorModel!.department!;
               dateController.text = cubit.doctorModel!.dateOfBirth!;
-              cubit.doctorModel!.gender=='Male'?_value=1:_value=2;
               return SafeArea(
                 child: Form(
                   key: formKey,
@@ -62,6 +62,30 @@ class EditDoctorProfile extends StatelessWidget {
                                   fit: BoxFit.fill,
                                 ),
                               ),
+                              Padding(
+                                padding: const EdgeInsets.only(left: 20.0),
+                                child: Align(
+                                  alignment: Alignment.bottomLeft,
+                                  child: Row(
+                                    children: [
+                                      CircleAvatar(
+                                        radius: 16,
+                                        child: IconButton(
+                                          padding: EdgeInsets.zero,
+                                          onPressed: ()async {
+                                            cubit.deletePhoto();
+                                          },
+                                          icon: Icon(IconBroken.Delete,size: 22,),
+                                          color: ColorManager.white,
+                                        ),
+                                      ),
+                                      Text(' Delete photo', style: getRegularStyle(
+                                          color: ColorManager.black,
+                                          fontSize: 14) ,)
+                                    ],
+                                  ),
+                                ),
+                              ),
                               Align(
                                 alignment: Alignment.bottomCenter,
                                 child: Container(
@@ -69,19 +93,32 @@ class EditDoctorProfile extends StatelessWidget {
                                   child: Stack(
                                     alignment: Alignment.bottomCenter,
                                     children: [
+                                      cubit.imageUri=='https://www.personality-insights.com/wp-content/uploads/2017/12/default-profile-pic-e1513291410505.jpg'?
                                       CircleAvatar(
                                         radius: 48,
                                         backgroundColor: Theme.of(context)
                                             .scaffoldBackgroundColor,
-                                        child: cubit.profileImage==null?
+                                        child:
                                         CircleAvatar(
                                           radius: 55,
-                                          backgroundImage: NetworkImage('${cubit.doctorModel!.image}'),
-
-                                        ): CircleAvatar(
+                                          backgroundImage: NetworkImage(
+                                              'https://www.personality-insights.com/wp-content/uploads/2017/12/default-profile-pic-e1513291410505.jpg'),
+                                        ),
+                                      ):
+                                      CircleAvatar(
+                                        radius: 48,
+                                        backgroundColor: Theme.of(context)
+                                            .scaffoldBackgroundColor,
+                                        child: cubit.profileImage == null
+                                            ? CircleAvatar(
                                           radius: 55,
-                                          backgroundImage: FileImage(cubit.profileImage!),
-
+                                          backgroundImage: NetworkImage(
+                                              '${cubit.doctorModel!.image}'),
+                                        )
+                                            : CircleAvatar(
+                                          radius: 55,
+                                          backgroundImage: FileImage(
+                                              cubit.profileImage!),
                                         ),
                                       ),
                                       Padding(
@@ -92,15 +129,18 @@ class EditDoctorProfile extends StatelessWidget {
                                             radius: 16,
                                             child: IconButton(
                                               padding: EdgeInsets.zero,
-                                              onPressed: ()async {
+                                              onPressed: () async {
                                                 await cubit.getProfileImage();
                                               },
-                                              icon: Icon(IconBroken.Camera,size: 22,),
+                                              icon: Icon(
+                                                IconBroken.Camera,
+                                                size: 22,
+                                              ),
                                               color: ColorManager.white,
                                             ),
                                           ),
                                         ),
-                                      )
+                                      ),
                                     ],
                                   ),
                                 ),
@@ -182,8 +222,10 @@ class EditDoctorProfile extends StatelessWidget {
                                       activeColor: ColorManager.primary,
                                       focusColor: ColorManager.primary,
                                       value: 1,
-                                      groupValue: _value,
-                                      onChanged: (value) {}),
+                                      groupValue: cubit.gender,
+                                      onChanged: (value) {
+                                        cubit.changeGender(value!);
+                                      }),
                                   Text(
                                     "Male",
                                     style: getRegularStyle(
@@ -197,8 +239,10 @@ class EditDoctorProfile extends StatelessWidget {
                                       activeColor: ColorManager.primary,
                                       focusColor: ColorManager.primary,
                                       value: 2,
-                                      groupValue: _value,
-                                      onChanged: (value) {}),
+                                      groupValue: cubit.gender,
+                                      onChanged: (value) {
+                                        cubit.changeGender(value!);
+                                      }),
                                   Text(
                                     "Female",
                                     style: getRegularStyle(
@@ -236,7 +280,7 @@ class EditDoctorProfile extends StatelessWidget {
                                     if (formKey.currentState!.validate()) {
                                       String gender = '';
                                       String image = '';
-                                      gender = _value == 1 ? 'Male' : 'Female';
+                                      gender = cubit.gender == 1 ? 'Male' : 'Female';
                                       image = cubit.profileImage==null? cubit.doctorModel!.image!
                                           : cubit.imageUri;
                                       cubit.updateDoctorProfile(

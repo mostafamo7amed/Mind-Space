@@ -13,6 +13,13 @@ class CreateCubit extends Cubit<CreateStates>{
 
   static CreateCubit getCubit(context) => BlocProvider.of(context);
 
+
+
+  int gender =1;
+  void changeGender(int value){
+    gender = value;
+    emit(ChangeGenderState());
+  }
   void createUser({
     required String userType,
     required String email,
