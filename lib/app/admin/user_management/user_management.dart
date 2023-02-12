@@ -661,7 +661,7 @@ class UserManagement extends StatelessWidget {
                     ],
                   ),
                   Text(
-                    "Doctor Information",
+                    "Student Information",
                     style: getBoldStyle(
                         color: ColorManager.darkGray, fontSize: 18),
                   ),

@@ -25,7 +25,11 @@ class HomeStudentView extends StatelessWidget {
     return BlocConsumer<StudentCubit, StudentStates>(
       listener: (context, state) {
         if (state is GetStudentSuccessState) {
-          StudentCubit.getCubit(context).GetAllGroupSession();
+          if(StudentCubit.getCubit(context).studentModel!.isBlocked!){
+            showAlertDialog(context);
+          }else{
+            StudentCubit.getCubit(context).GetAllGroupSession();
+          }
         }
         if (state is GetAllGroupSessionSuccessState) {
           print(
@@ -300,4 +304,77 @@ class HomeStudentView extends StatelessWidget {
           ],
         ),
       );
+
+  Future showAlertDialog(context) => showDialog(
+    barrierDismissible: false,
+    context: context,
+    builder: (context) {
+      String mess ="You cannot currently use the application\n For inquiries contact";
+      String mess3 ='admin@mindspace.edu.sa';
+      return Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                "Alert",
+                style: getBoldStyle(
+                    color: ColorManager.darkGray, fontSize: 18),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    '$mess \n $mess3',
+                    style: getSemiBoldStyle(
+                        color: ColorManager.darkGray, fontSize: 12),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  TextButton(
+                    style: ButtonStyle(
+                        shape: MaterialStatePropertyAll(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(50),
+                          ),
+                        ),
+                        backgroundColor:
+                        MaterialStatePropertyAll(ColorManager.primary)),
+                    onPressed: () {
+                      FirebaseAuth.instance.signOut();
+                      CacheHelper.removeData(key: 'uid');
+                      uid = '';
+                      print(CacheHelper.getData(key: 'uid'));
+                      navigateAndFinish(context, LoginView());
+                    },
+                    child: Text(
+                      "Logout",
+                      style: getRegularStyle(color: ColorManager.white),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: 10,
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
 }

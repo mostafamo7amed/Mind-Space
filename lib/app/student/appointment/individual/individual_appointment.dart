@@ -104,7 +104,7 @@ class IndividualAppointment extends StatelessWidget {
   Widget IndividualItemBuilder(context,Doctor model , index) {
     return InkWell(
       onTap: () {
-        navigateTo(context, CompleteIndividualAppointment(appointmentType,model.id!));
+        navigateTo(context, CompleteIndividualAppointment(appointmentType,model.id!,model.name!));
       },
       child:Padding(
         padding: EdgeInsets.only(

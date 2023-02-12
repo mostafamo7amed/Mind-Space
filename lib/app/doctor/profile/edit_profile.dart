@@ -62,30 +62,6 @@ class EditDoctorProfile extends StatelessWidget {
                                   fit: BoxFit.fill,
                                 ),
                               ),
-                              Padding(
-                                padding: const EdgeInsets.only(left: 20.0),
-                                child: Align(
-                                  alignment: Alignment.bottomLeft,
-                                  child: Row(
-                                    children: [
-                                      CircleAvatar(
-                                        radius: 16,
-                                        child: IconButton(
-                                          padding: EdgeInsets.zero,
-                                          onPressed: ()async {
-                                            cubit.deletePhoto();
-                                          },
-                                          icon: Icon(IconBroken.Delete,size: 22,),
-                                          color: ColorManager.white,
-                                        ),
-                                      ),
-                                      Text(' Delete photo', style: getRegularStyle(
-                                          color: ColorManager.black,
-                                          fontSize: 14) ,)
-                                    ],
-                                  ),
-                                ),
-                              ),
                               Align(
                                 alignment: Alignment.bottomCenter,
                                 child: Container(
@@ -146,6 +122,32 @@ class EditDoctorProfile extends StatelessWidget {
                                 ),
                               ),
                             ],
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 20.0),
+                          child: Align(
+                            alignment: Alignment.bottomCenter,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                CircleAvatar(
+                                  radius: 16,
+                                  child: IconButton(
+                                    padding: EdgeInsets.zero,
+                                    onPressed: ()async {
+                                      cubit.deletePhoto();
+                                    },
+                                    icon: Icon(IconBroken.Delete,size: 22,),
+                                    color: ColorManager.white,
+                                  ),
+                                ),
+                                Text(' Delete photo', style: getRegularStyle(
+                                    color: ColorManager.black,
+                                    fontSize: 14) ,)
+                              ],
+                            ),
                           ),
                         ),
                         Padding(

@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:mind_space/app/models/student.dart';
 import 'package:mind_space/app/student/home/home_student_cubit/states.dart';
 import '../../../models/appointment.dart';
+import '../../../models/date.dart';
 import '../../../models/doctor.dart';
 import '../../../models/group_session.dart';
 
@@ -52,6 +53,7 @@ class StudentCubit extends Cubit<StudentStates> {
     required String date,
     required String time,
     required String studentNickname,
+    required String doctorName,
   }) async {
     emit(MakeAppointmentLoadingState());
     String appointmentId = await generateRandomString(25);
@@ -67,17 +69,69 @@ class StudentCubit extends Cubit<StudentStates> {
         studentNickname,
         'Processing',
         '',
-        false);
+        false,
+        doctorName,
+    );
     FirebaseFirestore.instance
         .collection('Appointment')
         .doc(appointmentId)
         .set(appointmentModel.toMap()!)
         .then((value) {
+          bookingDates(appointmentId: appointmentId, doctorId: doctorId, date: date, time: time);
       emit(MakeAppointmentSuccessState());
     }).catchError((e) {
       emit(MakeAppointmentErrorState());
     });
   }
+   void bookingDates({
+     required String appointmentId,
+     required String doctorId,
+     required String date,
+     required String time,
+}){
+    BookingDate bookingDate = BookingDate(date, time);
+     FirebaseFirestore.instance
+         .collection('Booking dates')
+         .doc(doctorId)
+         .collection('Dates')
+         .doc(appointmentId).set(bookingDate.toMap()!).then((value) {
+       emit(BookingDateSuccessState());
+     }).catchError((e){
+       emit(BookingDateErrorState());
+     });
+   }
+   List <BookingDate> doctorDares =[];
+  void getBookingDates({
+    required String doctorId,
+  }){
+    doctorDares =[];
+    FirebaseFirestore.instance
+        .collection('Booking dates')
+        .doc(doctorId)
+        .collection('Dates')
+        .get().then((value) {
+      for (var element in value.docs) {
+        doctorDares.add(BookingDate.fromMap(element.data()));
+      }
+      emit(GetBookingDateSuccessState());
+    }).catchError((e){
+      emit(GetBookingDateErrorState());
+    });
+  }
+
+  String dateExist = 'no';
+  void searchForDate(String date ,String time){
+    dateExist = 'no';
+    doctorDares.forEach((element) {
+      if(element.time == time && element.date==date){
+        dateExist = 'yes';
+      }
+    });
+    emit(FindBookingDateState());
+  }
+
+
+
 
   String individualDate = '';
   getAppointmentDate(String date) {
@@ -312,6 +366,7 @@ class StudentCubit extends Cubit<StudentStates> {
         onlineAppointmentList[index].status,
         onlineAppointmentList[index].doctorReport,
         true,
+        onlineAppointmentList[index].doctorName
       );
       FirebaseFirestore.instance
           .collection('Appointment')
@@ -337,6 +392,7 @@ class StudentCubit extends Cubit<StudentStates> {
         offlineAppointmentList[index].status,
         offlineAppointmentList[index].doctorReport,
         true,
+        offlineAppointmentList[index].doctorName,
       );
       FirebaseFirestore.instance
           .collection('Appointment')

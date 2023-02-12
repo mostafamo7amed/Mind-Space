@@ -24,7 +24,12 @@ class AppointmentManagement extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<AdminCubit, AdminStates>(
-      listener: (context, state) {},
+      listener: (context, state) {
+        if (state is DeleteSessionSuccessState ||
+            state is AddLinkSuccessState) {
+          AdminCubit.getCubit(context).getAllAppointment();
+        }
+      },
       builder: (context, state) {
         var cubit = AdminCubit.getCubit(context);
         return Scaffold(
@@ -145,10 +150,16 @@ class AppointmentManagement extends StatelessWidget {
                     if (searchController.text.isNotEmpty &&
                         cubit.searchAppointmentList.isNotEmpty) {
                       return appointmentItemBuilder(
-                          cubit.searchAppointmentList[index], context, true,index);
+                          cubit.searchAppointmentList[index],
+                          context,
+                          true,
+                          index);
                     } else {
                       return appointmentItemBuilder(
-                          cubit.allAppointmentList[index], context, false,index);
+                          cubit.allAppointmentList[index],
+                          context,
+                          false,
+                          index);
                     }
                   },
                   separatorBuilder: (context, index) => const SizedBox(
@@ -164,7 +175,7 @@ class AppointmentManagement extends StatelessWidget {
   }
 
   Widget appointmentItemBuilder(
-      AppointmentModel model, context, bool isSearch,index) {
+      AppointmentModel model, context, bool isSearch, index) {
     return Padding(
       padding: const EdgeInsets.only(
         left: 5,
@@ -286,23 +297,25 @@ class AppointmentManagement extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    TextButton(
-                      style: ButtonStyle(
-                          shape: MaterialStatePropertyAll(
-                            RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(50),
+                    if (model.type == 'Online')
+                      TextButton(
+                        style: ButtonStyle(
+                            shape: MaterialStatePropertyAll(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(50),
+                              ),
                             ),
-                          ),
-                          backgroundColor:
-                              MaterialStatePropertyAll(Colors.blue)),
-                      onPressed: () {
-                        showEditAppointmentDialog(model, context, index, isSearch);
-                      },
-                      child: Text(
-                        "Edit",
-                        style: getRegularStyle(color: ColorManager.white),
+                            backgroundColor:
+                                MaterialStatePropertyAll(Colors.blue)),
+                        onPressed: () {
+                          showEditAppointmentDialog(
+                              model, context, index, isSearch);
+                        },
+                        child: Text(
+                          "Edit",
+                          style: getRegularStyle(color: ColorManager.white),
+                        ),
                       ),
-                    ),
                     const SizedBox(
                       width: 10,
                     ),
@@ -316,7 +329,8 @@ class AppointmentManagement extends StatelessWidget {
                           backgroundColor:
                               MaterialStatePropertyAll(Colors.red)),
                       onPressed: () {
-                        showCancelAppointmentDialog(model, context, index, isSearch);
+                        showCancelAppointmentDialog(
+                            model, context, index, isSearch);
                       },
                       child: Text(
                         "Cancel",
@@ -336,12 +350,13 @@ class AppointmentManagement extends StatelessWidget {
     );
   }
 
-  Future showEditAppointmentDialog(AppointmentModel model, context, index,bool isSearch) {
+  Future showEditAppointmentDialog(
+      AppointmentModel model, context, index, bool isSearch) {
     linkController.text = model.link!;
     return showDialog(
       context: context,
       builder: (context) {
-        return BlocConsumer<AdminCubit,AdminStates>(
+        return BlocConsumer<AdminCubit, AdminStates>(
           listener: (context, state) {},
           builder: (context, state) => Dialog(
             shape: RoundedRectangleBorder(
@@ -389,7 +404,7 @@ class AppointmentManagement extends StatelessWidget {
                                 hintText: 'Enter appointment link',
                                 border: OutlineInputBorder(
                                   borderRadius:
-                                  BorderRadius.all(Radius.circular(10.0)),
+                                      BorderRadius.all(Radius.circular(10.0)),
                                 ),
                               ),
                               validator: (value) {
@@ -414,11 +429,13 @@ class AppointmentManagement extends StatelessWidget {
                                   ),
                                 ),
                                 backgroundColor:
-                                MaterialStatePropertyAll(Colors.green)),
+                                    MaterialStatePropertyAll(Colors.green)),
                             onPressed: () {
                               if (formKey2.currentState!.validate()) {
-                                AdminCubit.getCubit(context)
-                                    .addAppointmentLink(index: index,link:  linkController.text,isSearch: isSearch);
+                                AdminCubit.getCubit(context).addAppointmentLink(
+                                    index: index,
+                                    link: linkController.text,
+                                    isSearch: isSearch);
                                 Navigator.pop(context);
                               }
                             },
@@ -438,7 +455,7 @@ class AppointmentManagement extends StatelessWidget {
                                   ),
                                 ),
                                 backgroundColor:
-                                MaterialStatePropertyAll(Colors.blue)),
+                                    MaterialStatePropertyAll(Colors.blue)),
                             onPressed: () {
                               Navigator.pop(context);
                             },
@@ -459,10 +476,12 @@ class AppointmentManagement extends StatelessWidget {
             ),
           ),
         );
-      },);
+      },
+    );
   }
 
-  Future showCancelAppointmentDialog(AppointmentModel model, context, index,bool isSearch) =>
+  Future showCancelAppointmentDialog(
+          AppointmentModel model, context, index, bool isSearch) =>
       showDialog(
         context: context,
         builder: (context) {
@@ -493,17 +512,24 @@ class AppointmentManagement extends StatelessWidget {
                       style: getBoldStyle(
                           color: ColorManager.darkGray, fontSize: 18),
                     ),
-                    SizedBox(height: 10,),
+                    SizedBox(
+                      height: 10,
+                    ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Expanded(
-                          child: Text('Do you want to Cancel this Session?',
-                            style: getRegularStyle(color: ColorManager.black,fontSize: 15),),
+                          child: Text(
+                            'Do you want to Cancel this Session?',
+                            style: getRegularStyle(
+                                color: ColorManager.black, fontSize: 15),
+                          ),
                         )
                       ],
                     ),
-                    SizedBox(height: 10,),
+                    SizedBox(
+                      height: 10,
+                    ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -515,9 +541,11 @@ class AppointmentManagement extends StatelessWidget {
                                 ),
                               ),
                               backgroundColor:
-                              MaterialStatePropertyAll(Colors.red)),
+                                  MaterialStatePropertyAll(Colors.red)),
                           onPressed: () {
-                            AdminCubit.getCubit(context).DeleteAppointmentSession(index: index, isSearch: isSearch);
+                            AdminCubit.getCubit(context)
+                                .DeleteAppointmentSession(
+                                    index: index, isSearch: isSearch);
                             Navigator.pop(context);
                           },
                           child: Text(
@@ -536,7 +564,7 @@ class AppointmentManagement extends StatelessWidget {
                                 ),
                               ),
                               backgroundColor:
-                              MaterialStatePropertyAll(Colors.blue)),
+                                  MaterialStatePropertyAll(Colors.blue)),
                           onPressed: () {
                             Navigator.pop(context);
                           },

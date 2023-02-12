@@ -56,3 +56,13 @@ class ChangeRateStatusSuccessState extends StudentStates{}
 class ChangeRateStatusErrorState extends StudentStates{}
 class GetRateState extends StudentStates{}
 class DeletePhotoState extends StudentStates{}
+
+
+class BookingDateSuccessState extends StudentStates{}
+class BookingDateErrorState extends StudentStates{}
+
+
+class GetBookingDateSuccessState extends StudentStates{}
+class GetBookingDateErrorState extends StudentStates{}
+
+class FindBookingDateState extends StudentStates{}

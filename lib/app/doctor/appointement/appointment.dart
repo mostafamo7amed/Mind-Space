@@ -335,9 +335,12 @@ class Appointment extends StatelessWidget {
                 Row(
                   children: [
                     Spacer(),
-                    ImageIcon(AssetImage(ImageAssets.point),
-                      size: 12,
-                      color: ColorManager.error,
+                    InkWell(
+                      onTap: () => Navigator.pop(context),
+                      child: ImageIcon(AssetImage(ImageAssets.point),
+                        size: 12,
+                        color: ColorManager.error,
+                      ),
                     ),
                   ],
                 ),
@@ -348,6 +351,15 @@ class Appointment extends StatelessWidget {
                 ),
                 SizedBox(
                   height: 10,
+                ),
+
+                Text(
+                  "${model.studentNickname}",
+                  style: getSemiBoldStyle(
+                      color: ColorManager.darkGray, fontSize: 14),
+                ),
+                SizedBox(
+                  height: 5,
                 ),
                 Text(
                   "${model.date}",

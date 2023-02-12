@@ -13,16 +13,24 @@ import '../../../resources/styles_manager.dart';
 class CompleteIndividualAppointment extends StatelessWidget {
   String appointmentType;
   String doctorId;
+  String doctorName;
 
-  CompleteIndividualAppointment(this.appointmentType, this.doctorId, {Key? key})
+  CompleteIndividualAppointment(
+      this.appointmentType, this.doctorId, this.doctorName,
+      {Key? key})
       : super(key: key);
   var nameController = TextEditingController();
   var formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
+    StudentCubit.getCubit(context).getBookingDates(doctorId: doctorId);
     return BlocConsumer<StudentCubit, StudentStates>(
-      listener: (context, state) {},
+      listener: (context, state) {
+        if(state is MakeAppointmentSuccessState){
+          StudentCubit.getCubit(context).getBookingDates(doctorId: doctorId);
+        }
+      },
       builder: (context, state) {
         var cubit = StudentCubit.getCubit(context);
         return Scaffold(
@@ -272,16 +280,32 @@ class CompleteIndividualAppointment extends StatelessWidget {
                                 } else {
                                   if (cubit.individualDate != '' &&
                                       cubit.individualTime != '') {
-                                    cubit.makeAppointment(
+                                    cubit.searchForDate(cubit.individualDate,
+                                        cubit.individualTime);
+                                    if (cubit.dateExist == 'no') {
+                                      cubit.makeAppointment(
                                         type: appointmentType,
                                         accountType: 'Visible',
                                         doctorId: doctorId,
                                         date: cubit.individualDate,
                                         time: cubit.individualTime,
-                                        studentNickname: 'Visible');
-                                    toast(message: 'Appointment booked successfully', data: ToastStates.success);
-                                  }else{
-                                    toast(message: 'Please choose Date and Time', data: ToastStates.success);
+                                        studentNickname: 'Visible',
+                                        doctorName: doctorName,
+                                      );
+                                      toast(
+                                          message:
+                                              'Appointment booked successfully',
+                                          data: ToastStates.success);
+                                    } else {
+                                      toast(
+                                          message:
+                                              'This appointment not available',
+                                          data: ToastStates.error);
+                                    }
+                                  } else {
+                                    toast(
+                                        message: 'Please choose Date and Time',
+                                        data: ToastStates.success);
                                   }
                                 }
                               },
@@ -368,16 +392,32 @@ class CompleteIndividualAppointment extends StatelessWidget {
                   ],
                 )),
             onTap: () {
-              if (cubit.individualDate != '' &&
-                  cubit.individualTime != '') {
-                cubit.makeAppointment(type: appointmentType, accountType: 'Visible',
-                    doctorId: doctorId, date: cubit.individualDate , time: cubit.individualTime,
-                    studentNickname: 'Visible');
+              if (cubit.individualDate != '' && cubit.individualTime != '') {
+                cubit.searchForDate(cubit.individualDate, cubit.individualTime);
+                if (cubit.dateExist == 'no') {
+                  cubit.makeAppointment(
+                    type: appointmentType,
+                    accountType: 'Visible',
+                    doctorId: doctorId,
+                    date: cubit.individualDate,
+                    time: cubit.individualTime,
+                    studentNickname: cubit.studentModel!.name!,
+                    doctorName: doctorName,
+                  );
+                  Navigator.pop(context);
+                  toast(
+                      message: 'Appointment booked successfully',
+                      data: ToastStates.success);
+                } else {
+                  toast(
+                      message: 'This appointment not available',
+                      data: ToastStates.error);
+                }
+              } else {
                 Navigator.pop(context);
-                toast(message: 'Appointment booked successfully', data: ToastStates.success);
-              }else{
-                Navigator.pop(context);
-                toast(message: 'Please choose Date and Time', data: ToastStates.success);
+                toast(
+                    message: 'Please choose Date and Time',
+                    data: ToastStates.success);
               }
             },
           ),
@@ -484,24 +524,39 @@ class CompleteIndividualAppointment extends StatelessWidget {
                               ),
                             ),
                             backgroundColor:
-                            MaterialStatePropertyAll(Colors.green)),
+                                MaterialStatePropertyAll(Colors.green)),
                         onPressed: () {
-                          if(formKey.currentState!.validate()){
+                          if (formKey.currentState!.validate()) {
                             if (cubit.individualDate != '' &&
                                 cubit.individualTime != '') {
-                              cubit.makeAppointment(
-                                  type: appointmentType, accountType: 'Hidden',
+                              cubit.searchForDate(
+                                  cubit.individualDate, cubit.individualTime);
+                              if (cubit.dateExist == 'no') {
+                                cubit.makeAppointment(
+                                  type: appointmentType,
+                                  accountType: 'Hidden',
                                   doctorId: doctorId,
-                                  date: cubit.individualDate ,
+                                  date: cubit.individualDate,
                                   time: cubit.individualTime,
-                                  studentNickname: nameController.text);
+                                  studentNickname: nameController.text,
+                                  doctorName: doctorName,
+                                );
+                                Navigator.pop(context);
+                                Navigator.pop(context);
+                                toast(
+                                    message: 'Appointment booked successfully',
+                                    data: ToastStates.success);
+                              } else {
+                                toast(
+                                    message: 'This appointment not available',
+                                    data: ToastStates.error);
+                              }
+                            } else {
                               Navigator.pop(context);
                               Navigator.pop(context);
-                              toast(message: 'Appointment booked successfully', data: ToastStates.success);
-                            }else{
-                              Navigator.pop(context);
-                              Navigator.pop(context);
-                              toast(message: 'Please choose Date and Time', data: ToastStates.success);
+                              toast(
+                                  message: 'Please choose Date and Time',
+                                  data: ToastStates.success);
                             }
                           }
                         },

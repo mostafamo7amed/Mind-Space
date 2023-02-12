@@ -145,7 +145,7 @@ class DoctorCubit extends Cubit<DoctorStates> {
         date,
         time,
         link,
-        'Closed',
+        'Opened',
         doctorModel!.name,
         doctorModel!.rate,
         doctorModel!.id);
@@ -211,6 +211,7 @@ class DoctorCubit extends Cubit<DoctorStates> {
         .doc(acceptedAppointmentList[index].appointmentId)
         .delete()
         .then((value) {
+      DeleteBookingDates(index: index);
       toast(message: 'Session deleted successfully', data: ToastStates.success);
       emit(DeleteSessionSuccessState());
     }).catchError((e) {
@@ -307,12 +308,14 @@ class DoctorCubit extends Cubit<DoctorStates> {
         status,
         report,
         acceptedAppointmentList[index].isRated,
+        acceptedAppointmentList[index].doctorName,
       );
       FirebaseFirestore.instance
           .collection('Appointment')
           .doc(acceptedAppointmentList[index].appointmentId)
           .update(appointmentModel.toMap()!)
           .then((value) {
+        DeleteBookingDates(index: index);
         emit(ChangeStatusSuccessState());
       }).catchError((e) {
         emit(ChangeStatusErrorState());
@@ -332,6 +335,7 @@ class DoctorCubit extends Cubit<DoctorStates> {
           status,
           onlineAppointmentList[index].doctorReport,
           onlineAppointmentList[index].isRated,
+          onlineAppointmentList[index].doctorName,
         );
         FirebaseFirestore.instance
             .collection('Appointment')
@@ -356,6 +360,7 @@ class DoctorCubit extends Cubit<DoctorStates> {
           status,
           offlineAppointmentList[index].doctorReport,
           offlineAppointmentList[index].isRated,
+          offlineAppointmentList[index].doctorName,
         );
         FirebaseFirestore.instance
             .collection('Appointment')
@@ -368,6 +373,20 @@ class DoctorCubit extends Cubit<DoctorStates> {
         });
       }
     }
+  }
+
+  DeleteBookingDates({
+    required int index,
+  }) {
+    FirebaseFirestore.instance
+        .collection('Booking dates').doc(doctorModel!.id!).collection('Dates')
+        .doc(acceptedAppointmentList[index].appointmentId)
+        .delete()
+        .then((value) {
+      emit(DeleteSessionSuccessState());
+    }).catchError((e) {
+      emit(DeleteSessionErrorState());
+    });
   }
 
   void addAppointmentLink(index, String link) {
@@ -384,6 +403,7 @@ class DoctorCubit extends Cubit<DoctorStates> {
       acceptedAppointmentList[index].status,
       acceptedAppointmentList[index].doctorReport,
       acceptedAppointmentList[index].isRated,
+      acceptedAppointmentList[index].doctorName,
     );
     FirebaseFirestore.instance
         .collection('Appointment')

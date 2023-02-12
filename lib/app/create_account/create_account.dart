@@ -26,7 +26,6 @@ class CreateAccount extends StatelessWidget {
   var phoneController = TextEditingController();
   var departController = TextEditingController();
   var dateController = TextEditingController();
-  int _value = 1;
   @override
   Widget build(BuildContext context) {
     return BlocProvider(

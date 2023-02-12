@@ -9,6 +9,12 @@ class RegisterCubit extends Cubit<RegisterStates> {
 
   static RegisterCubit getCubit(context) => BlocProvider.of(context);
 
+  String userAcc ='';
+
+  changeAcc(String acc){
+    userAcc = acc;
+    emit(RegisterAccState());
+  }
   register({
     required String email,
     required String password,

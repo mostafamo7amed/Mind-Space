@@ -447,6 +447,14 @@ class _PreviousSessionState extends State<PreviousSession> {
                 SizedBox(
                   height: 10,
                 ),
+                SizedBox(
+                  height: 5,
+                ),
+                Text(
+                  "Dr.${model.doctorName}",
+                  style: getSemiBoldStyle(
+                      color: ColorManager.darkGray, fontSize: 14),
+                ),
                 Text(
                   "${model.date}",
                   style: getSemiBoldStyle(

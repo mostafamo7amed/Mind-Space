@@ -23,6 +23,7 @@ class _RegisterViewState extends State<RegisterView> {
   var conFirmPasswordController = TextEditingController();
   var formKey = GlobalKey<FormState>();
   List<bool> isSelected = [true, false];
+  String con ='';
 
   @override
   Widget build(BuildContext context) {
@@ -83,12 +84,20 @@ class _RegisterViewState extends State<RegisterView> {
                                 Icon(Icons.email, color: ColorManager.primary),
                             controller: emailController,
                             validate: (value) {
-                              if (value!.isEmpty ||
+                              if (!value.contains('.edu.sa') ||value!.isEmpty ||
                                   !RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w]{2,4}')
                                       .hasMatch(value!)) {
                                 return 'Please enter valid email address';
                               }
                               return null;
+                            },
+                            onChange: (value){
+                              if(value.contains('@ut.edu.sa')){
+                                cubit.changeAcc('Doctor');
+                              }
+                              if(value.contains('@stu.ut.edu.sa')){
+                                cubit.changeAcc('Student');
+                              }
                             },
                             type: TextInputType.emailAddress,
                           ),
@@ -209,9 +218,25 @@ class _RegisterViewState extends State<RegisterView> {
                               ),
                               onPressed: () {
                                 if (formKey.currentState!.validate()) {
-                                  cubit.register(
-                                      email: emailController.text,
-                                      password: passwordController.text);
+                                  String userType  ='';
+                                  userType = isSelected[0]==true? 'Doctor':'Student';
+                                  if(userType==cubit.userAcc){
+                                    if(userType == 'Student'){
+                                      if(emailController.text.length == 23){
+                                        cubit.register(
+                                            email: emailController.text,
+                                            password: passwordController.text);
+                                      }else{
+                                        toast(message: 'Student email not valid', data: ToastStates.error);
+                                      }
+                                    }else{
+                                      cubit.register(
+                                          email: emailController.text,
+                                          password: passwordController.text);
+                                    }
+                                  }else{
+                                    toast(message: 'Please select valid user', data: ToastStates.error);
+                                  }
                                 }
                               },
                             ),

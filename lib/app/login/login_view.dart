@@ -55,13 +55,14 @@ class LoginView extends StatelessWidget {
                           const SizedBox(
                             height: 10,
                           ),
+
                           defaultFormField(
                             context: context,
                             label: 'Email Address',
                             prefix: Icon(Icons.email,color: ColorManager.primary),
                             controller: emailController,
                             validate: (value) {
-                              if (value!.isEmpty|| !RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w]{2,4}').hasMatch(value!)) {
+                              if (!value.contains('.edu.sa')||value!.isEmpty||!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w]{2,4}').hasMatch(value!)) {
                                 return 'Please enter valid email address ';
                               }
                               return null;

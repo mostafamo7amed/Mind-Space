@@ -9,6 +9,7 @@ import 'package:mind_space/shared/components/component.dart';
 
 import '../../../shared/network/local/cache_helper.dart';
 import '../../resources/assets_manager.dart';
+import '../../resources/styles_manager.dart';
 
 class HomeDoctorView extends StatelessWidget {
   const HomeDoctorView({Key? key}) : super(key: key);
@@ -20,9 +21,14 @@ class HomeDoctorView extends StatelessWidget {
     return BlocConsumer<DoctorCubit, DoctorStates>(
       listener: (context, state) {
         if(state is GetDoctorSuccessState){
-          cubit.getAllOnlineAppointment();
-          cubit.getAllOfflineAppointment();
+          if(cubit.doctorModel!.isBlocked!){
+            showAlertDialog(context);
+          }else{
+            cubit.getAllOnlineAppointment();
+            cubit.getAllOfflineAppointment();
+          }
         }
+
       },
       builder: (context, state) {
         var cubit = DoctorCubit.getCubit(context);
@@ -69,4 +75,76 @@ class HomeDoctorView extends StatelessWidget {
       },
     );
   }
+  Future showAlertDialog(context) => showDialog(
+    barrierDismissible: false,
+    context: context,
+    builder: (context) {//
+      String mess ="You cannot currently use the application\n For inquiries contact";
+      String mess3 ='admin@mindspace.edu.sa';
+      return Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                "Alert",
+                style: getBoldStyle(
+                    color: ColorManager.darkGray, fontSize: 18),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    '$mess \n $mess3',
+                    style: getSemiBoldStyle(
+                        color: ColorManager.darkGray, fontSize: 12),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  TextButton(
+                    style: ButtonStyle(
+                        shape: MaterialStatePropertyAll(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(50),
+                          ),
+                        ),
+                        backgroundColor:
+                        MaterialStatePropertyAll(ColorManager.primary)),
+                    onPressed: () {
+                      FirebaseAuth.instance.signOut();
+                      CacheHelper.removeData(key: 'uid');
+                      uid = '';
+                      print(CacheHelper.getData(key: 'uid'));
+                      navigateAndFinish(context, LoginView());
+                    },
+                    child: Text(
+                      "Logout",
+                      style: getRegularStyle(color: ColorManager.white),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: 10,
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
 }

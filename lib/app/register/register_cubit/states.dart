@@ -12,3 +12,5 @@ class RegisterErrorState extends RegisterStates {}
 
 class RegisterPasswordState extends RegisterStates {}
 class RegisterPassword2State extends RegisterStates {}
+
+class RegisterAccState extends RegisterStates {}

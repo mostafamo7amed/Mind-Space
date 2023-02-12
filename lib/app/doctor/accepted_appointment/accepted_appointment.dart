@@ -22,7 +22,7 @@ class AcceptedAppointment extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocConsumer<DoctorCubit,DoctorStates>(
       listener: (context, state) {
-        if(state is AddLinkSuccessState || state is DeleteSessionSuccessState){
+        if(state is AddLinkSuccessState || state is DeleteSessionSuccessState|| state is ChangeStatusSuccessState){
           DoctorCubit.getCubit(context).getAllOfflineAppointment();
           DoctorCubit.getCubit(context).getAllOnlineAppointment();
         }
@@ -198,9 +198,12 @@ class AcceptedAppointment extends StatelessWidget {
               Row(
                 children: [
                   Spacer(),
-                  ImageIcon(AssetImage(ImageAssets.point),
-                    size: 12,
-                    color: ColorManager.error,
+                  InkWell(
+                    onTap: () => Navigator.pop(context),
+                    child: ImageIcon(AssetImage(ImageAssets.point),
+                      size: 12,
+                      color: ColorManager.error,
+                    ),
                   ),
                 ],
               ),
@@ -211,6 +214,14 @@ class AcceptedAppointment extends StatelessWidget {
               ),
               SizedBox(
                 height: 10,
+              ),
+              Text(
+                "${model.studentNickname}",
+                style: getSemiBoldStyle(
+                    color: ColorManager.darkGray, fontSize: 14),
+              ),
+              SizedBox(
+                height: 5,
               ),
               Text(
                 "${model.date}",
@@ -364,10 +375,15 @@ class AcceptedAppointment extends StatelessWidget {
                       Row(
                         children: [
                           Spacer(),
-                          ImageIcon(
-                            AssetImage(ImageAssets.point),
-                            size: 12,
-                            color: ColorManager.error,
+                          InkWell(
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                            child: ImageIcon(
+                              AssetImage(ImageAssets.point),
+                              size: 12,
+                              color: ColorManager.error,
+                            ),
                           ),
                         ],
                       ),
@@ -486,10 +502,15 @@ class AcceptedAppointment extends StatelessWidget {
                     Row(
                       children: [
                         Spacer(),
-                        ImageIcon(
-                          AssetImage(ImageAssets.point),
-                          size: 12,
-                          color: ColorManager.error,
+                        InkWell(
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
+                          child: ImageIcon(
+                            AssetImage(ImageAssets.point),
+                            size: 12,
+                            color: ColorManager.error,
+                          ),
                         ),
                       ],
                     ),
@@ -583,10 +604,15 @@ class AcceptedAppointment extends StatelessWidget {
                       Row(
                         children: [
                           Spacer(),
-                          ImageIcon(
-                            AssetImage(ImageAssets.point),
-                            size: 12,
-                            color: ColorManager.error,
+                          InkWell(
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                            child: ImageIcon(
+                              AssetImage(ImageAssets.point),
+                              size: 12,
+                              color: ColorManager.error,
+                            ),
                           ),
                         ],
                       ),
@@ -644,6 +670,7 @@ class AcceptedAppointment extends StatelessWidget {
                               if(formKey2.currentState!.validate()){
                                 DoctorCubit.getCubit(context)
                                     .changeAppointmentStatus(appointmentType: model.type!, index: index,status: 'Finished',doctorReport: reportController.text);
+                                Navigator.pop(context);
                                 Navigator.pop(context);
                               }
                             },

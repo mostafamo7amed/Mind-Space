@@ -623,9 +623,13 @@ class GroupAppointment extends StatelessWidget {
                         backgroundColor:
                         MaterialStatePropertyAll(Colors.green)),
                     onPressed: () {
-                      StudentCubit.getCubit(context).bookGroupSession(index: index);
-                      toast(message: 'Session booked successfully', data:  ToastStates.success);
-                      Navigator.pop(context);
+                      if(model.status=='Opened'){
+                        StudentCubit.getCubit(context).bookGroupSession(index: index);
+                        toast(message: 'Session booked successfully', data:  ToastStates.success);
+                        Navigator.pop(context);
+                      }else{
+                        toast(message: 'Session Closed', data: ToastStates.error);
+                      }
                     },
                     child: Text(
                       "Book",

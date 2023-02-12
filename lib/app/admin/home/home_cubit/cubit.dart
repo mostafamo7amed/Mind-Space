@@ -117,7 +117,7 @@ class AdminCubit extends Cubit<AdminStates> {
     allAppointmentList = [];
     emit(GetAllAppointmentLoadingState());
     FirebaseFirestore.instance
-        .collection('Individual Session')
+        .collection('Appointment')
         .get()
         .then((value) {
       for (var element in value.docs) {
@@ -186,6 +186,7 @@ class AdminCubit extends Cubit<AdminStates> {
         searchAppointmentList[index].status,
         searchAppointmentList[index].doctorReport,
         searchAppointmentList[index].isRated,
+        searchAppointmentList[index].doctorName,
       );
       FirebaseFirestore.instance
           .collection('Appointment')
@@ -211,6 +212,7 @@ class AdminCubit extends Cubit<AdminStates> {
         allAppointmentList[index].status,
         allAppointmentList[index].doctorReport,
         allAppointmentList[index].isRated,
+        allAppointmentList[index].doctorName,
       );
       FirebaseFirestore.instance
           .collection('Appointment')

@@ -11,9 +11,10 @@ class AppointmentModel {
   String? status;
   bool? isRated;
   String? doctorReport;
+  String? doctorName;
 
   AppointmentModel(this.appointmentId, this.studentId, this.accountType,
-      this.date, this.time, this.link, this.type, this.doctorId,this.studentNickname,this.status,this.doctorReport,this.isRated);
+      this.date, this.time, this.link, this.type, this.doctorId,this.studentNickname,this.status,this.doctorReport,this.isRated,this.doctorName);
 
   AppointmentModel.fromMap(Map<String, dynamic> map) {
     studentId = map['studentId'];
@@ -28,6 +29,7 @@ class AppointmentModel {
     status = map['status'];
     doctorReport = map['doctorReport'];
     isRated = map['isRated'];
+    doctorName = map['doctorName'];
   }
 
   Map<String, dynamic>? toMap() {
@@ -44,6 +46,7 @@ class AppointmentModel {
       'status': status,
       'doctorReport': doctorReport,
       'isRated':isRated,
+      'doctorName':doctorName,
     };
   }
 }
